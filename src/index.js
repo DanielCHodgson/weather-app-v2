@@ -9,6 +9,4 @@ const weatherAPI = new WeatherAPI();
 const locationService = new LocationService();
 const weatherDataService = new WeatherDataService(weatherAPI, locationService);
 
-weatherDataService.getAllData();
-
-const currentForecastWidget = new CurrentForecastWidget(document.querySelector("body"));
+const currentForecastWidget = new CurrentForecastWidget(weatherDataService, document.querySelector("body"));

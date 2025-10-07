@@ -25,4 +25,14 @@ export default class DomUtility {
     return tempDiv.firstChild;
   }
 
+ static loadAnimatedWeatherIcon(name) {
+  const iconSrc = `./src/res/weather-icons/animated/${name}.svg`;
+
+  const img = document.createElement("img");
+  img.src = iconSrc;
+  img.alt = `${name} icon`;
+  img.classList.add("weather-icon");
+  return img;
+}
+
 }

@@ -10,18 +10,24 @@ export default class WeatherDataService {
   async getAllData() {
     const location = await this.#locationService.getLocation();
     const data = await this.#weatherAPI.getData(location);
-    console.log(data);
+    return data;
   }
 
   async getFortnightData() {
     const location = await this.#locationService.getLocation();
     const data = await this.#weatherAPI.getData(location);
-    console.log(data.days);
+    return data.days;
   }
+  
 
-  async getDailyForecast() {
+  async getCurrentForecast() {
     const location = await this.#locationService.getLocation();
     const data = await this.#weatherAPI.getData(location);
-    console.log(data.currentConditions);
+    return data.currentConditions;
   }
+
+  getLocationService() {
+    return this.#locationService;
+  }
+
 }
