@@ -8,23 +8,20 @@ export default class WeatherDataService {
   }
 
   async getAllData() {
-    const data = await this.#weatherAPI.getData(
-      this.#locationService.getLocation(),
-    );
+    const location = await this.#locationService.getLocation();
+    const data = await this.#weatherAPI.getData(location);
     console.log(data);
   }
 
   async getFortnightData() {
-    const data = await this.#weatherAPI.getData(
-      this.#locationService.getLocation(),
-    );
+    const location = await this.#locationService.getLocation();
+    const data = await this.#weatherAPI.getData(location);
     console.log(data.days);
   }
 
   async getDailyForecast() {
-    const data = await this.#weatherAPI.getData(
-      this.#locationService.getLocation(),
-    );
+    const location = await this.#locationService.getLocation();
+    const data = await this.#weatherAPI.getData(location);
     console.log(data.currentConditions);
   }
 }

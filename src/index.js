@@ -8,4 +8,4 @@ const weatherAPI = new WeatherAPI();
 const locationService = new LocationService();
 const weatherDataService = new WeatherDataService(weatherAPI, locationService);
 
-weatherDataService.getDailyForecast();
+weatherDataService.getAllData();

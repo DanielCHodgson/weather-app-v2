@@ -7,9 +7,20 @@ export default class WeatherAPI {
 
   async getData(location) {
     try {
+
+      let locationQuery;
+
+      if (typeof location === "string") {
+        locationQuery = location;
+      } else if (typeof location === "object" && location.latitude && location.longitude) {
+        locationQuery = `${location.latitude},${location.longitude}`;
+      } else {
+        throw new Error("Invalid location format");
+      }
+
       const response = await fetch(
-        `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=${this.#apiKey}`,
-        { mode: "cors" },
+        `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${locationQuery}?key=${this.#apiKey}`,
+        { mode: "cors" }
       );
 
       if (!response.ok) {
@@ -18,7 +29,6 @@ export default class WeatherAPI {
 
       const weatherData = await response.json();
       return weatherData;
-      
     } catch (error) {
       console.error("Failed to fetch weather data:", error);
       throw error;
