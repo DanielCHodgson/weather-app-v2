@@ -1,0 +1,33 @@
+.daily-forecast {
+    width: 500px;
+    min-width: 500px;
+    height: 200px;
+    background-color: rgb(190, 116, 116);
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+    color: #FFF;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+}
+
+.daily-forecast div {
+    width: 100%;
+}
+
+.daily-forecast .location {
+    font-size: 2rem;
+    padding: 0 1rem;
+    font-weight: bold;
+}
+
+.daily-forecast .icon {
+    width: 100%;
+}
+
+.daily-forecast .temp {
+    font-size: 1.5rem;
+    font-weight: bold;
+}

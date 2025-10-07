@@ -1,4 +1,5 @@
 export default class DomUtility {
+
   static stringToHTML(string) {
     if (typeof string !== "string" || string.trim() === "") {
       throw new Error("loadHTML: Input must be a non-empty HTML string.");
@@ -17,4 +18,11 @@ export default class DomUtility {
 
     return element;
   }
+
+  static renderSvg(svgString) {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = svgString;
+    return tempDiv.firstChild;
+  }
+
 }
