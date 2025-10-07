@@ -1,3 +1,4 @@
+import CurrentForecastWidget from "./components/current-forecast-widget/current-forecast-widget";
 import LocationService from "./services/LocationService";
 import WeatherAPI from "./services/WeatherAPI";
 import WeatherDataService from "./services/WeatherDataService";
@@ -9,3 +10,5 @@ const locationService = new LocationService();
 const weatherDataService = new WeatherDataService(weatherAPI, locationService);
 
 weatherDataService.getAllData();
+
+const currentForecastWidget = new CurrentForecastWidget(document.querySelector("body"));
