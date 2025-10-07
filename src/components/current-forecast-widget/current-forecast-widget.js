@@ -20,7 +20,7 @@ export default class CurrentForecastWidget {
   cacheFields() {
     return {
       location: this.#element.querySelector(".location"),
-      icon: this.#element.querySelector(".icon"), // <div class="icon"></div> in HTML
+      icon: this.#element.querySelector(".icon"),
       temp: this.#element.querySelector(".temp"),
       description: this.#element.querySelector(".description"),
     };
@@ -28,28 +28,49 @@ export default class CurrentForecastWidget {
 
   async setData() {
     try {
-      const location = await this.#weatherDataService
-        .getLocationService()
-        .getTownName();
-      const data = await this.#weatherDataService.getCurrentForecast();
+      const [location, data] = await Promise.all([
+        this.#weatherDataService.getLocationService().getName(),
+        this.#weatherDataService.getCurrentForecast(),
+      ]);
 
-      this.#fields.location.textContent = location;
-      this.#fields.temp.textContent = `${data.temp}°`;
-      this.#fields.description.textContent = data.conditions;
-      //this.setWeatherIcon(data.icon);
+      this.#updateLocation(location);
+      this.#updateForecast(data);
+      await this.#updateIcon(data.icon);
     } catch (error) {
       console.error("Failed to load data:", error);
-      this.#fields.location.textContent = "Unavailable";
-      this.#fields.description.textContent = "Data unavailable";
+      this.#showFallback();
     } finally {
-      Object.values(this.#fields).forEach((field) => {
-        field.classList.remove("skeleton");
-      });
+      this.#removeSkeleton();
     }
   }
 
+  #updateLocation(location) {
+    this.#fields.location.textContent = location;
+  }
+
+  #updateForecast(data) {
+    this.#fields.temp.textContent = `${data.temp}°`;
+    this.#fields.description.textContent = data.conditions;
+  }
+
+  async #updateIcon(iconName) {
+    this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(iconName);
+  }
+
+  #showFallback() {
+    this.#fields.location.textContent = "Unavailable";
+    this.#fields.description.textContent = "Data unavailable";
+  }
+
+  #removeSkeleton() {
+    Object.values(this.#fields).forEach((field) =>
+      field.classList.remove("skeleton"),
+    );
+  }
+
   setWeatherIcon(iconToUse) {
-    
+    const src = DomUtility.getAnimatedWeatherIcon(iconToUse);
+    this.#fields.icon.src = src;
   }
 
   render() {

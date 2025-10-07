@@ -33,7 +33,7 @@ export default class LocationService {
     }
   }
 
-  async getTownName() {
+  async getName() {
     try {
       const location = await this.#location;
 

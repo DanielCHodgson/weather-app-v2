@@ -1,5 +1,4 @@
 export default class DomUtility {
-
   static stringToHTML(string) {
     if (typeof string !== "string" || string.trim() === "") {
       throw new Error("loadHTML: Input must be a non-empty HTML string.");
@@ -7,7 +6,6 @@ export default class DomUtility {
 
     const temp = document.createElement("div");
     temp.innerHTML = string.trim();
-
     const element = temp.firstElementChild;
 
     if (!element) {
@@ -15,7 +13,6 @@ export default class DomUtility {
         "loadHTML: Failed to convert HTML string to a DOM element.",
       );
     }
-
     return element;
   }
 
@@ -25,14 +22,16 @@ export default class DomUtility {
     return tempDiv.firstChild;
   }
 
- static loadAnimatedWeatherIcon(name) {
-  const iconSrc = `./src/res/weather-icons/animated/${name}.svg`;
-
-  const img = document.createElement("img");
-  img.src = iconSrc;
-  img.alt = `${name} icon`;
-  img.classList.add("weather-icon");
-  return img;
-}
-
+  static async getAnimatedWeatherIcon(name) {
+    try {
+      const module = await import(`../res/weather-icons/animated/${name}.svg`);
+      return module.default;
+    } catch (err) {
+      console.warn(`Icon "${name}" not found, using default.`);
+      const defaultModule = await import(
+        `../res/weather-icons/animated/partly-cloudy-day.svg`
+      );
+      return defaultModule.default;
+    }
+  }
 }
