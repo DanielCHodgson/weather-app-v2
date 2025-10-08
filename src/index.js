@@ -1,4 +1,5 @@
 import CurrentForecastWidget from "./components/current-forecast-widget/current-forecast-widget";
+import FortnightlyForecastWidget from "./components/fortnightly-forecast-widget/fortnightly-forecast-widget";
 import LocationService from "./services/LocationService";
 import WeatherAPI from "./services/WeatherAPI";
 import WeatherDataService from "./services/WeatherDataService";
@@ -9,4 +10,6 @@ const weatherAPI = new WeatherAPI();
 const locationService = new LocationService();
 const weatherDataService = new WeatherDataService(weatherAPI, locationService);
 
-const currentForecastWidget = new CurrentForecastWidget(weatherDataService, document.querySelector("body"));
+const currentForecast = new CurrentForecastWidget(weatherDataService, document.querySelector("body"));
+const fortnightlyForecast = new FortnightlyForecastWidget(document.querySelector("body"));
+

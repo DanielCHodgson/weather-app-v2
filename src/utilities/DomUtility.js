@@ -34,4 +34,18 @@ export default class DomUtility {
       return defaultModule.default;
     }
   }
+
+  async updateIcon(img, iconName) {
+    img.src = await this.getAnimatedWeatherIcon(iconName);
+  }
+
+  static showFallbackText(field) {
+    field.textContent = "No data";
+  }
+
+  static removeSkeletons(fields) {
+    Object.values(fields).forEach((field) =>
+      field.classList.remove("skeleton"),
+    );
+  }
 }

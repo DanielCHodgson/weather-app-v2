@@ -38,9 +38,12 @@ export default class CurrentForecastWidget {
       await this.#updateIcon(data.icon);
     } catch (error) {
       console.error("Failed to load data:", error);
-      this.#showFallback();
+      DomUtility.showFallbackText([
+        this.#fields.location,
+        this.#fields.description,
+      ]);
     } finally {
-      this.#removeSkeleton();
+      DomUtility.removeSkeletons(this.#fields);
     }
   }
 
@@ -55,17 +58,6 @@ export default class CurrentForecastWidget {
 
   async #updateIcon(iconName) {
     this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(iconName);
-  }
-
-  #showFallback() {
-    this.#fields.location.textContent = "Unavailable";
-    this.#fields.description.textContent = "Data unavailable";
-  }
-
-  #removeSkeleton() {
-    Object.values(this.#fields).forEach((field) =>
-      field.classList.remove("skeleton"),
-    );
   }
 
   setWeatherIcon(iconToUse) {
