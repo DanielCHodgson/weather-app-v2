@@ -33,7 +33,6 @@ export default class FortnightlyForecastWidget {
     const days = data.days;
 
     for (let i = 0; i < 14; i++) {
-      console.log(days[i]);
       this.#tiles[i].setData(days[i]);
     }
   }

@@ -1,23 +1,26 @@
 .forecast-tile {
-    width: 130px;
-    height: 100%;
-    background-color: rgb(104, 186, 233);
-    border-radius: 4px;
+  width: 100%;
+  height: 100px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 8px;
 
-    display: grid;
-    grid-template-rows: 0.5fr 1fr 1fr 1.5fr;
-    place-items: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr;
+  place-items: center;
 
-    color: #FFF;
-    font-family: 'Courier New', Courier, monospace;
-    text-align: center;
+  font-family: "Courier New", Courier, monospace;
+  text-align: center;
 
-    padding: 0.2rem;
-    scroll-snap-align: start;
+  padding: 0.2rem;
+  scroll-snap-align: start;
 }
 
+.forecast-tile:hover {
+      background-color: rgb(147, 186, 209);
+      cursor: pointer;
+      color: #FFF;
+}
 
 .date {
-    font-weight: bold;
+  font-weight: bold;
 }
-

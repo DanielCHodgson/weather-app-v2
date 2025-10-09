@@ -1,8 +1,7 @@
 body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    background-color: #BAC9E2;
 }
 
 .skeleton {
