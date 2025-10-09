@@ -3,17 +3,14 @@ import "./forecast-tile.css";
 import DomUtility from "../../../utilities/DomUtility";
 
 export default class ForecastTile {
-  #data;
   #container;
   #element;
   #fields = {};
 
-  constructor(data, container) {
-    this.#data = data;
+  constructor(container) {
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
     this.#fields = this.cacheFields();
-    this.setData(data);
     this.render();
   }
 
@@ -27,27 +24,23 @@ export default class ForecastTile {
     };
   }
 
-  async setData() {
+  async setData(data) {
     try {
-      this.#updateDay();
-      this.#updateForecast();
-      await this.#updateIcon();
+      this.#updateDay(data);
+      this.#updateForecast(data);
+      await this.#updateIcon(data);
     } catch (error) {
-      console.error("Failed to load data:", error);
-      DomUtility.showFallbackText([
-        this.#fields.temp,
-        this.#fields.feelsLike,
-        this.#fields.description,
-      ]);
+      console.error("Failed to load tile data:", error);
+      this.#fields.forEach((element) => {
+        DomUtility.showFallbackText(element);
+      });
     } finally {
-      DomUtility.removeSkeletons(this.#fields);
+      DomUtility.removeSkeleton(this.#element);
     }
   }
 
-  #updateDay() {
-    const dateStr = this.#data.datetime;
-    const date = new Date(dateStr);
-
+  #updateDay(data) {
+    const date = new Date(data.datetime);
     const weekday = date.toLocaleDateString("en-UK", { weekday: "short" });
     const day = date.getDate();
 
@@ -57,20 +50,17 @@ export default class ForecastTile {
       return n + (s[(v - 20) % 10] || s[v] || s[0]);
     };
 
-    const formattedDate = `${weekday} ${getOrdinal(day)}`;
-    this.#fields.date.textContent = formattedDate;
+    this.#fields.date.textContent = `${weekday} ${getOrdinal(day)}`;
   }
 
-  #updateForecast() {
-    this.#fields.actual.textContent = `${this.#data.temp}°`;
-    this.#fields.feelsLike.textContent = `${this.#data.feelslike}°`;
-    this.#fields.conditions.textContent = this.#data.conditions;
+  #updateForecast(data) {
+    this.#fields.actual.textContent = `${data.temp}°`;
+    this.#fields.feelsLike.textContent = `${data.feelslike}°`;
+    this.#fields.conditions.textContent = data.conditions;
   }
 
-  async #updateIcon() {
-    this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(
-      this.#data.icon,
-    );
+  async #updateIcon(data) {
+    this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(data.icon);
   }
 
   render() {

@@ -43,9 +43,12 @@ export default class DomUtility {
     field.textContent = "No data";
   }
 
-  static removeSkeletons(fields) {
-    Object.values(fields).forEach((field) =>
-      field.classList.remove("skeleton"),
+  static removeSkeletons(elements) {
+    Object.values(elements).forEach((element) =>
+      element.classList.remove("skeleton"),
     );
+  }
+  static removeSkeleton(element) {
+    element.classList.remove("skeleton");
   }
 }

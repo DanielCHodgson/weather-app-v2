@@ -13,28 +13,32 @@ export default class FortnightlyForecastWidget {
     this.#weatherDataService = weatherDataService;
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
-    this.addTiles();
     this.render();
+    this.addTiles();
+    this.setTileData();
   }
 
   cacheFields() {
     return {};
   }
 
-  async addTiles() {
-    const data = await this.#weatherDataService.getAllData();
-
-    data.days.forEach((forecast) =>
-      this.#tiles.push(new ForecastTile(forecast, this.#element)),
-    );
+  addTiles() {
+    for (let i = 0; i < 14; i++) {
+      this.#tiles.push(new ForecastTile(this.#element));
+    }
   }
 
-  renderTiles() {
-    this.#tiles.forEach((tile) => tile.render());
+  async setTileData() {
+    const data = await this.#weatherDataService.getAllData();
+    const days = data.days;
+
+    for (let i = 0; i < 14; i++) {
+      console.log(days[i]);
+      this.#tiles[i].setData(days[i]);
+    }
   }
 
   render() {
-    this.renderTiles();
     this.#container.appendChild(this.#element);
   }
 }

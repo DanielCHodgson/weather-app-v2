@@ -1,11 +1,11 @@
 .forecast-tile {
-    height: 220px;
     width: 130px;
+    height: 100%;
     background-color: rgb(104, 186, 233);
     border-radius: 4px;
 
     display: grid;
-    grid-template-rows: 0.5fr 1fr auto 1fr;
+    grid-template-rows: 0.5fr 1fr 1fr 1.5fr;
     place-items: center;
 
     color: #FFF;
@@ -16,4 +16,8 @@
     scroll-snap-align: start;
 }
 
+
+.date {
+    font-weight: bold;
+}
 
