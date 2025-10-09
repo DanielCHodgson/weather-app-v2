@@ -1,8 +1,20 @@
+import EventBus from "../utilities/EventBus";
+
 export default class LocationService {
   #location;
 
   constructor() {
     this.#location = this.initLocation();
+    this.registerEvents();
+  }
+
+  registerEvents() {
+    EventBus.on("locationSubmitted", (data) => this.handleLocationUpdate(data));
+  }
+
+  handleLocationUpdate(data) {
+    this.setLocation(data);
+    console.log("Updated location:", data);
   }
 
   async getUserLocationData() {

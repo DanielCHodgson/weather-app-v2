@@ -28,8 +28,6 @@ export default class LeftPanel {
   }
 
   render() {
-    console.log(this.#container)
-    console.log(this.#element)
     this.#container.appendChild(this.#element);
   }
 }
