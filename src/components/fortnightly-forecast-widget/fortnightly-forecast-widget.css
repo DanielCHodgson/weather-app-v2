@@ -1,6 +1,13 @@
 .fortnightly-forecast {
-    width: 80%;
-    height: 200px;
-    padding: 0.2rem;
-    background-color: rgb(219, 219, 219);
+  width: 80%;
+  padding: 0.2rem;
+  background-color: rgb(219, 219, 219);
+
+  display: grid;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(120px, 1fr);
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
 }

@@ -3,22 +3,23 @@ import "./forecast-tile.css";
 import DomUtility from "../../../utilities/DomUtility";
 
 export default class ForecastTile {
-  #weatherData;
+  #data;
   #container;
   #element;
   #fields = {};
 
-  constructor(weatherData, container) {
-    this.#weatherData = weatherData;
+  constructor(data, container) {
+    this.#data = data;
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
     this.#fields = this.cacheFields();
+    this.setData(data);
     this.render();
   }
 
   cacheFields() {
     return {
-      day: this.#element.querySelector(".day"),
+      date: this.#element.querySelector(".date"),
       actual: this.#element.querySelector(".actual"),
       feelsLike: this.#element.querySelector(".feels-like"),
       icon: this.#element.querySelector(".icon"),
@@ -26,39 +27,52 @@ export default class ForecastTile {
     };
   }
 
-  async setData(data) {
+  async setData() {
     try {
-      const data = await Promise(this.#weatherData);
-
-      this.#updateDay(data);
-      this.#updateForecast(data);
-      await this.#updateIcon(data.icon);
+      this.#updateDay();
+      this.#updateForecast();
+      await this.#updateIcon();
     } catch (error) {
       console.error("Failed to load data:", error);
-      DomUtility.showFallbackText([this.#fields.temp, this.#fields.description]);
+      DomUtility.showFallbackText([
+        this.#fields.temp,
+        this.#fields.feelsLike,
+        this.#fields.description,
+      ]);
     } finally {
       DomUtility.removeSkeletons(this.#fields);
     }
   }
 
-  #updateDay(data) {
+  #updateDay() {
+    const dateStr = this.#data.datetime;
+    const date = new Date(dateStr);
 
+    const weekday = date.toLocaleDateString("en-UK", { weekday: "short" });
+    const day = date.getDate();
+
+    const getOrdinal = (n) => {
+      const s = ["th", "st", "nd", "rd"];
+      const v = n % 100;
+      return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    };
+
+    const formattedDate = `${weekday} ${getOrdinal(day)}`;
+    this.#fields.date.textContent = formattedDate;
   }
 
-  #updateForecast(data) {
-    this.#fields.temp.textContent = `${data.temp}°`;
-    this.#fields.description.textContent = data.conditions;
+  #updateForecast() {
+    this.#fields.actual.textContent = `${this.#data.temp}°`;
+    this.#fields.feelsLike.textContent = `${this.#data.feelslike}°`;
+    this.#fields.conditions.textContent = this.#data.conditions;
   }
 
-  async #updateIcon(iconName) {
-    this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(iconName);
+  async #updateIcon() {
+    this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(
+      this.#data.icon,
+    );
   }
 
-
-  setWeatherIcon(iconToUse) {
-    const src = DomUtility.getAnimatedWeatherIcon(iconToUse);
-    this.#fields.icon.src = src;
-  }
   render() {
     this.#container.appendChild(this.#element);
   }

@@ -10,6 +10,18 @@ const weatherAPI = new WeatherAPI();
 const locationService = new LocationService();
 const weatherDataService = new WeatherDataService(weatherAPI, locationService);
 
-const currentForecast = new CurrentForecastWidget(weatherDataService, document.querySelector("body"));
-const fortnightlyForecast = new FortnightlyForecastWidget(document.querySelector("body"));
+const currentForecast = new CurrentForecastWidget(
+  weatherDataService,
+  document.querySelector("body"),
+);
+const fortnightlyForecast = new FortnightlyForecastWidget(
+  weatherDataService,
+  document.querySelector("body"),
+);
 
+async function printAllWeatherData() {
+  const data = await weatherDataService.getAllData();
+  console.log(data);
+}
+
+printAllWeatherData();
