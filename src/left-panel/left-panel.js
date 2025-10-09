@@ -1,6 +1,7 @@
 import htmlString from "./left-panel.html";
 import "./left-panel.css";
 import DomUtility from "../utilities/DomUtility";
+import Search from "../components/search/search";
 import FortnightlyForecastWidget from "../components/fortnightly-forecast-widget/fortnightly-forecast-widget";
 
 export default class LeftPanel {
@@ -17,6 +18,9 @@ export default class LeftPanel {
   }
 
   init() {
+
+    new Search(this.#element);
+
     new FortnightlyForecastWidget(
       this.#weatherDataService,
       this.#element,

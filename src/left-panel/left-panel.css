@@ -1,0 +1,6 @@
+.left-panel {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 120px auto;
+  background-color: rgb(255, 255, 255);
+}

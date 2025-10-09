@@ -1,15 +1,13 @@
 .daily-forecast {
-  width: 500px;
+  width: 100%;
   min-width: 500px;
   height: 200px;
   background-color: rgb(190, 116, 116);
-  border-radius: 10px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   justify-items: center;
   align-items: center;
   color: #fff;
-  font-family: "Courier New", Courier, monospace;
   text-align: center;
 }
 
