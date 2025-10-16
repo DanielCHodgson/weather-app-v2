@@ -3,17 +3,14 @@ import "./current-forecast-widget.css";
 import DomUtility from "../../utilities/DomUtility";
 
 export default class CurrentForecastWidget {
-  #weatherDataService;
   #container;
   #element;
   #fields;
 
-  constructor(weatherDataService, container) {
-    this.#weatherDataService = weatherDataService;
+  constructor(container) {
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
     this.#fields = this.cacheFields();
-    this.setData();
     this.render();
   }
 
@@ -26,14 +23,10 @@ export default class CurrentForecastWidget {
     };
   }
 
-  async setData() {
+  async setData(data) {
     try {
-      const [location, data] = await Promise.all([
-        this.#weatherDataService.getLocationService().getName(),
-        this.#weatherDataService.getCurrentForecast(),
-      ]);
-
-      this.#updateLocation(location);
+       console.log(data)
+      this.#updateLocation(data);
       this.#updateForecast(data);
       await this.#updateIcon(data.icon);
     } catch (error) {
@@ -47,8 +40,9 @@ export default class CurrentForecastWidget {
     }
   }
 
-  #updateLocation(location) {
-    this.#fields.location.textContent = location;
+  #updateLocation(data) {
+   
+    this.#fields.location.textContent = data.location;
   }
 
   #updateForecast(data) {

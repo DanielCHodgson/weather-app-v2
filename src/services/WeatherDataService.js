@@ -43,6 +43,8 @@ export default class WeatherDataService {
 
   async getCurrentForecast() {
     const data = await this.#getOrFetchData();
+    const locationName = await this.#locationService.getName();
+    data.currentConditions.location = locationName;
     return data.currentConditions;
   }
 

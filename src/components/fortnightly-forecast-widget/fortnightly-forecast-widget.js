@@ -4,18 +4,16 @@ import ForecastTile from "./forecast-tile/forecast-tile";
 import DomUtility from "../../utilities/DomUtility";
 
 export default class FortnightlyForecastWidget {
-  #weatherDataService;
   #container;
   #element;
   #tiles = [];
 
-  constructor(weatherDataService, container) {
-    this.#weatherDataService = weatherDataService;
+  constructor(container) {
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
     this.render();
     this.addTiles();
-    this.setTileData();
+    //this.setData();
   }
 
   cacheFields() {
@@ -28,12 +26,9 @@ export default class FortnightlyForecastWidget {
     }
   }
 
-  async setTileData() {
-    const data = await this.#weatherDataService.getAllData();
-    const days = data.days;
-
+  async setData(data) {
     for (let i = 0; i < 14; i++) {
-      this.#tiles[i].setData(days[i]);
+      this.#tiles[i].setData(data[i]);
     }
   }
 

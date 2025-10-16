@@ -5,12 +5,12 @@ import Search from "../components/search/search";
 import FortnightlyForecastWidget from "../components/fortnightly-forecast-widget/fortnightly-forecast-widget";
 
 export default class LeftPanel {
-  #weatherDataService;
   #container;
   #element;
+  #searchComponent;
+  #forecastComponent;
 
-  constructor(weatherDataService, container) {
-    this.#weatherDataService = weatherDataService;
+  constructor(container) {
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
     this.init();
@@ -18,16 +18,20 @@ export default class LeftPanel {
   }
 
   init() {
+    this.#searchComponent = new Search(this.#element, "locationSubmitted");
 
-    new Search(this.#element);
-
-    new FortnightlyForecastWidget(
-      this.#weatherDataService,
-      this.#element,
-    );
+    this.#forecastComponent = new FortnightlyForecastWidget(this.#element);
   }
 
   render() {
     this.#container.appendChild(this.#element);
+  }
+
+  getSearchComponent() {
+    return this.#searchComponent;
+  }
+
+  getForecastComponent() {
+    return this.#forecastComponent;
   }
 }
