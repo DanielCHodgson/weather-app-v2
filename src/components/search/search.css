@@ -3,6 +3,7 @@
   width: 100%;
   display: grid;
   place-items: center;
+  position: relative;
 }
 
 .search-pill {
@@ -41,4 +42,17 @@
 
 svg {
   display: block;
+}
+
+.search-message {
+  position: absolute;
+  bottom: -1em;
+  padding: 0.2rem 0.5rem;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 12px;
+  width: 80%;
+  height: 2rem;
+  font-size: 0.9rem;
+  color: red;
 }

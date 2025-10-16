@@ -8,43 +8,47 @@ export default class WeatherAPIService {
   }
 
   async getData(location) {
-    try {
-      let locationQuery;
+  try {
+    let locationQuery;
 
-      if (typeof location === "string") {
-        locationQuery = location;
-      } else if (typeof location === "object" && location.latitude && location.longitude) {
-        locationQuery = `${location.latitude},${location.longitude}`;
-      } else {
-        throw new Error("Invalid location format");
-      }
-
-      const cacheKey = `weather_${locationQuery}`;
-      const cached = this.#getFromCache(cacheKey);
-      if (cached) {
-        console.log("Using cached weather data for:", locationQuery);
-        return cached;
-      }
-
-      const response = await fetch(
-        `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${locationQuery}?key=${this.#apiKey}`,
-        { mode: "cors" }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const weatherData = await response.json();
-
-      this.#saveToCache(cacheKey, weatherData);
-
-      return weatherData;
-    } catch (error) {
-      console.error("Failed to fetch weather data:", error);
-      throw error;
+    if (typeof location === "string") {
+      locationQuery = location.trim();
+      if (!locationQuery) throw new Error("Please enter a location name.");
+    } else if (typeof location === "object" && location.latitude && location.longitude) {
+      locationQuery = `${location.latitude},${location.longitude}`;
+    } else {
+      throw new Error("Invalid location format");
     }
+
+    const cacheKey = `weather_${locationQuery}`;
+    const cached = this.#getFromCache(cacheKey);
+    if (cached) {
+      console.log("Using cached weather data for:", locationQuery);
+      return cached;
+    }
+
+    const response = await fetch(
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${encodeURIComponent(locationQuery)}?key=${this.#apiKey}`,
+      { mode: "cors" }
+    );
+
+    if (!response.ok) {
+      if (response.status === 400 || response.status === 404) {
+        throw new Error(`Could not find weather for "${locationQuery}". Please check your spelling or try another location.`);
+      }
+      throw new Error(`Weather API error (status ${response.status})`);
+    }
+
+    const weatherData = await response.json();
+    this.#saveToCache(cacheKey, weatherData);
+
+    return weatherData;
+  } catch (error) {
+    console.error("Failed to fetch weather data:", error);
+    throw error;
   }
+}
+
 
   #getFromCache(key) {
     const cached = localStorage.getItem(key);

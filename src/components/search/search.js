@@ -5,26 +5,54 @@ import EventBus from "../../utilities/EventBus";
 
 export default class Search {
   #container;
-  #signal
+  #signal;
   #element;
   #form;
   #input;
+  #message;
 
   constructor(container, signal) {
     this.#container = container;
     this.#signal = signal;
     this.#element = DomUtility.stringToHTML(htmlString);
+    console.log(this.#element);
+    this.#message = this.#element.querySelector(".search-message");
     this.#form = this.#element.querySelector(".search-pill");
     this.#input = this.#element.querySelector(".search-input");
     this.render();
-    this.addEventListener();
+    this.addEventListeners();
+    this.registerEventHandlers();
   }
 
-  addEventListener() {
+  addEventListeners() {
     this.#form.addEventListener("submit", (event) => {
       event.preventDefault();
-      EventBus.emit(this.#signal, this.#input.value);
+      const value = this.#input.value.trim();
+      if (!value) {
+        this.showMessage("Please enter a location name.", "error");
+        return;
+      }
+      EventBus.emit(this.#signal, value);
     });
+  }
+
+  registerEventHandlers() {
+    EventBus.on("weatherError", (error) => {
+      this.showMessage(error.message, "error");
+    });
+
+    EventBus.on("weatherUpdated", (data) => {
+      this.clearMessage();
+    });
+  }
+
+  showMessage(text, type) {
+    this.#message.textContent = text;
+    this.#message.className = `search-message ${type}`;
+  }
+
+  clearMessage() {
+    this.#message.textContent = "";
   }
 
   render() {
