@@ -18,7 +18,6 @@ export default class WeatherDataService {
     const data = await this.#weatherAPI.getData(location);
     return data.days;
   }
-  
 
   async getCurrentForecast() {
     const location = await this.#locationService.getLocation();
@@ -29,5 +28,4 @@ export default class WeatherDataService {
   getLocationService() {
     return this.#locationService;
   }
-
 }

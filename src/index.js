@@ -1,12 +1,12 @@
 import LocationService from "./services/LocationService";
-import WeatherAPI from "./services/WeatherAPI";
+import WeatherAPIService from "./services/WeatherAPIService";
 import WeatherDataService from "./services/WeatherDataService";
 import LeftPanel from "./left-panel/left-panel";
 import Dashboard from "./dashboard/dashboard";
 import "./styles/reset-modern.css";
 import "./styles/styles.css";
 
-const weatherAPI = new WeatherAPI();
+const weatherAPI = new WeatherAPIService();
 const locationService = new LocationService();
 const weatherDataService = new WeatherDataService(weatherAPI, locationService);
 
