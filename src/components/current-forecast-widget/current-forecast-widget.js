@@ -1,6 +1,7 @@
 import htmlString from "./current-forecast-widget.html";
 import "./current-forecast-widget.css";
 import DomUtility from "../../utilities/DomUtility";
+import EventBus from "../../utilities/EventBus";
 
 export default class CurrentForecastWidget {
   #container;
@@ -11,7 +12,14 @@ export default class CurrentForecastWidget {
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
     this.#fields = this.cacheFields();
+    this.registerEvents();
     this.render();
+  }
+
+  registerEvents() {
+    EventBus.on("weatherUpdated", (data) => {
+      this.setData(data.current);
+    });
   }
 
   cacheFields() {
@@ -25,7 +33,6 @@ export default class CurrentForecastWidget {
 
   async setData(data) {
     try {
-       console.log(data)
       this.#updateLocation(data);
       this.#updateForecast(data);
       await this.#updateIcon(data.icon);
@@ -41,7 +48,6 @@ export default class CurrentForecastWidget {
   }
 
   #updateLocation(data) {
-   
     this.#fields.location.textContent = data.location;
   }
 

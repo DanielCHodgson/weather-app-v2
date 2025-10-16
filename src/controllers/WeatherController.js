@@ -12,7 +12,8 @@ export default class WeatherController {
   }
 
   #registerEvents() {
-    EventBus.on("locaitonSubmitted", async (location) => {
+    EventBus.on("locationSubmitted", async (location) => {
+      console.log("locations submitted!");
       await this.updateWeather(location);
     });
   }
@@ -24,8 +25,16 @@ export default class WeatherController {
       const current = await this.#weatherDataService.getCurrentForecast();
       const forecast = await this.#weatherDataService.getFortnightData();
 
-      this.#uiComponents.current.setData(current);
-      this.#uiComponents.forecast.setData(forecast);
+      const payload = {
+        location:
+          current.location ||
+          (await this.#weatherDataService.getLocationService().getName()),
+        current,
+        forecast,
+      };
+
+      EventBus.emit("weatherUpdated", payload);
+      
     } catch (error) {
       console.error("Failed to update weather:", error);
       this.#uiComponents.errorDisplay.show(error.message);

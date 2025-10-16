@@ -2,6 +2,7 @@ import htmlString from "./fortnightly-forecast-widget.html";
 import "./fortnightly-forecast-widget.css";
 import ForecastTile from "./forecast-tile/forecast-tile";
 import DomUtility from "../../utilities/DomUtility";
+import EventBus from "../../utilities/EventBus";
 
 export default class FortnightlyForecastWidget {
   #container;
@@ -11,9 +12,15 @@ export default class FortnightlyForecastWidget {
   constructor(container) {
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
-    this.render();
     this.addTiles();
-    //this.setData();
+    this.registerEvents();
+    this.render();
+  }
+
+  registerEvents() {
+    EventBus.on("weatherUpdated", (data) => {
+      this.setData(data.forecast);
+    });
   }
 
   cacheFields() {
