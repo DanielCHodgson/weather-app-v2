@@ -19,6 +19,10 @@
   color: #fff;
 }
 
+.forecast-tile:hover p {
+  color: #fff;
+}
+
 .date,
 .actual {
   font-weight: bold;
@@ -26,4 +30,9 @@
 .day {
   align-self: center;
   justify-items: start;
+}
+
+.feels-like,
+.conditions {
+  color: #6c6c6c;
 }

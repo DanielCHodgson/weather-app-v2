@@ -23,7 +23,7 @@ export default class WeatherAPIService {
     const cacheKey = `weather_${locationQuery}`;
     const cached = this.#getFromCache(cacheKey);
     if (cached) {
-      console.log("Using cached weather data for:", locationQuery);
+      //console.log("Using cached weather data for:", locationQuery);
       return cached;
     }
 
