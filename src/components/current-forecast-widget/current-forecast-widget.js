@@ -36,6 +36,7 @@ export default class CurrentForecastWidget {
       this.#updateLocation(data);
       this.#updateForecast(data);
       await this.#updateIcon(data.icon);
+      await this.#updateBanner(data.icon);
     } catch (error) {
       console.error("Failed to load data:", error);
       DomUtility.showFallbackText([
@@ -59,6 +60,19 @@ export default class CurrentForecastWidget {
   async #updateIcon(iconName) {
     this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(iconName);
   }
+
+  async #updateBanner(iconName) {
+  try {
+    const bannerUrl = await DomUtility.getWeatherBanner(iconName);
+    this.#element.style.backgroundImage = `url(${bannerUrl})`;
+    this.#element.style.backgroundSize = "cover";
+    this.#element.style.backgroundPosition = "bottom center";
+    this.#element.style.repeat = "no repeat";
+  } catch (err) {
+    console.error("Failed to update banner:", err);
+  }
+}
+
 
   setWeatherIcon(iconToUse) {
     const src = DomUtility.getAnimatedWeatherIcon(iconToUse);

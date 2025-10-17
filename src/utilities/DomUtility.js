@@ -35,6 +35,19 @@ export default class DomUtility {
     }
   }
 
+  static async getWeatherBanner(name) {
+    try {
+      const module = await import(`../res/weather-icons/banners/${name}.jpg`);
+      return module.default;
+    } catch (err) {
+      console.warn(`Icon "${name}" not found, using default.`);
+      const defaultModule = await import(
+        `../res/weather-icons/banners/partly-cloudy-day.jpg`
+      );
+      return defaultModule.default;
+    }
+  }
+
   async updateIcon(img, iconName) {
     img.src = await this.getAnimatedWeatherIcon(iconName);
   }

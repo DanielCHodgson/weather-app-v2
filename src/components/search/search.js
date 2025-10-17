@@ -15,7 +15,6 @@ export default class Search {
     this.#container = container;
     this.#signal = signal;
     this.#element = DomUtility.stringToHTML(htmlString);
-    console.log(this.#element);
     this.#message = this.#element.querySelector(".search-message");
     this.#form = this.#element.querySelector(".search-pill");
     this.#input = this.#element.querySelector(".search-input");
