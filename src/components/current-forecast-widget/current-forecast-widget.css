@@ -4,7 +4,7 @@
   height: 100%;
   background-color: rgb(190, 116, 116);
   display: grid;
-  grid-template-columns: 2fr 1fr 2fr;
+  grid-template-columns: 2fr minmax(200px, 1fr) 2fr;
   justify-items: center;
   align-items: center;
   color: #fff;
@@ -26,11 +26,11 @@
 }
 
 .daily-forecast .temp {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: bold;
 }
 .daily-forecast .description {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
 .skeleton.location {
