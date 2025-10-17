@@ -1,110 +1,110 @@
 export default class LocationService {
-  #location;
-
-  constructor() {
-    this.#location = this.initLocation();
-  }
-
-  handleLocationUpdate(data) {
-    this.setLocation(data);
-    console.log("Updated location:", data);
-  }
+  #locationPromise = null;
+  #defaultLocation = "London, United Kingdom";
 
   async getUserLocationData() {
-    const position = await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        });
       });
-    });
 
-    const { latitude, longitude } = position.coords;
-
-    return {
-      latitude,
-      longitude,
-      timestamp: new Date().toISOString(),
-    };
+      const { latitude, longitude } = position.coords;
+      return { latitude, longitude, timestamp: new Date().toISOString() };
+    } catch (error) {
+      if (error.code === error.PERMISSION_DENIED) {
+        console.warn("User denied location access.");
+      } else {
+        console.error("Error fetching geolocation:", error);
+      }
+      return this.#defaultLocation;
+    }
   }
 
   async initLocation() {
-    try {
-      const locationData = await this.getUserLocationData();
-      return locationData;
-    } catch (error) {
-      console.error("Failed to get current location, using default:", error);
-      return "London";
-    }
+    return this.getUserLocationData();
   }
 
   async getName() {
+    const location = await this.getLocation();
+
+    if (typeof location === "string") {
+      return this.#resolveName({ query: location });
+    }
+
+    if (location.latitude && location.longitude) {
+      return this.#resolveName({
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+    }
+
+    return "Unknown";
+  }
+
+  async #resolveName({ query, latitude, longitude }) {
     try {
-      const location = await this.#location;
-      console.log("Resolving name for location:", location);
+      let url;
 
-      if (typeof location === "string") {
-        const query = encodeURIComponent(location);
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${query}&limit=1`,
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to resolve location name from text input");
-        }
-
-        const results = await response.json();
-        if (results.length === 0) {
-          throw new Error(`No matching location found for "${location}"`);
-        }
-
-        const match = results[0];
-        const displayName =
-          match.display_name ||
-          match.name ||
-          match.address?.city ||
-          match.address?.town ||
-          "Unknown";
-
-        return displayName;
+      if (query) {
+        const encoded = encodeURIComponent(query);
+        url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&q=${encoded}&limit=1`;
+      } else if (latitude && longitude) {
+        url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&lat=${latitude}&lon=${longitude}`;
+      } else {
+        throw new Error("Invalid location parameters");
       }
 
-      if (location.latitude && location.longitude) {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${location.latitude}&lon=${location.longitude}`,
+      const data = await this.#fetchJson(url);
+      const result = Array.isArray(data) ? data[0] : data;
+
+      if (!result) {
+        throw new Error(
+          `No matching location found for "${query ?? "coordinates"}"`,
         );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch town name from coordinates");
-        }
-
-        const data = await response.json();
-
-        const town =
-          data.address?.city ||
-          data.address?.town ||
-          data.address?.village ||
-          data.address?.hamlet ||
-          data.display_name ||
-          "Unknown";
-
-        return town;
       }
 
-      if (location.town) return location.town;
-
-      return "Unknown";
+      return this.#extractCityCountry(result);
     } catch (error) {
-      console.error("Error fetching town name:", error);
-      return "Unknown";
+      throw new Error(error.message || "Failed to resolve location");
     }
   }
 
+  async #fetchJson(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
+    return await response.json();
+  }
+
+  #extractCityCountry(data) {
+    const address = data.address || {};
+    const display = data.display_name || "";
+
+    const city =
+      address.city ||
+      address.town ||
+      address.village ||
+      address.hamlet ||
+      display.split(",")[0]?.trim() ||
+      "Unknown";
+
+    const country =
+      address.country || display.split(",").pop()?.trim() || "Unknown Country";
+
+    return `${city}, ${country}`;
+  }
+
   async getLocation() {
-    return await this.#location;
+    if (!this.#locationPromise) {
+      this.#locationPromise = this.initLocation();
+    }
+    return this.#locationPromise;
   }
 
   setLocation(newLocation) {
-    this.#location = Promise.resolve(newLocation);
+    this.#locationPromise = Promise.resolve(newLocation);
   }
 }
