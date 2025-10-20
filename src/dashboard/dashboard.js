@@ -2,11 +2,13 @@ import htmlString from "./dashboard.html";
 import "./dashboard.css";
 import DomUtility from "../utilities/DomUtility";
 import CurrentForecastWidget from "../components/current-forecast-widget/current-forecast-widget";
+import HourlyForecastWidget from "../components/hourly-forecast-widget/hourly-forecast-widget";
 
 export default class Dashboard {
   #container;
   #element;
-  #currentWeatherComponent;
+  #currentWeather;
+  #hourlyWeather;
 
   constructor(container) {
     this.#container = container;
@@ -16,7 +18,8 @@ export default class Dashboard {
   }
 
   init() {
-    this.#currentWeatherComponent = new CurrentForecastWidget(this.#element);
+    this.#currentWeather = new CurrentForecastWidget(this.#element);
+    this.#hourlyWeather = new HourlyForecastWidget(this.#element);
   }
 
   render() {
@@ -24,6 +27,6 @@ export default class Dashboard {
   }
 
   getCurrentWeatherComponent() {
-    return this.#currentWeatherComponent;
+    return this.#currentWeather;
   }
 }

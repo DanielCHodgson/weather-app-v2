@@ -17,7 +17,7 @@ export default class CurrentForecastWidget {
   }
 
   registerEvents() {
-    EventBus.on("weatherUpdated", (data) => {
+    EventBus.on("locationUpdated", (data) => {
       this.setData(data.current);
     });
   }

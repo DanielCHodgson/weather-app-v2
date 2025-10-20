@@ -24,7 +24,7 @@ const weatherController = new WeatherController(
   uiComponents,
 );
 
-weatherController.updateWeather(await locationService.getLocation());
+weatherController.updateLocation(await locationService.getLocation());
 
 async function printAllWeatherData() {
   const data = await weatherDataService.getAllData();
