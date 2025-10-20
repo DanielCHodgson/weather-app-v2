@@ -20,11 +20,18 @@ export default class CurrentForecastWidget {
     EventBus.on("locationUpdated", (data) => {
       this.setData(data.current);
     });
+
+    EventBus.on("dayUpdated", (data) => {
+      const forecast = data.day;
+      forecast.location = this.#getCurrentLocation();
+      this.setData(forecast);
+    });
   }
 
   cacheFields() {
     return {
-      location: this.#element.querySelector(".location"),
+      locationPrimary: this.#element.querySelector(".location .primary"),
+      locationSecondary: this.#element.querySelector(".location .secondary"),
       icon: this.#element.querySelector(".icon"),
       temp: this.#element.querySelector(".temp"),
       description: this.#element.querySelector(".description"),
@@ -40,7 +47,8 @@ export default class CurrentForecastWidget {
     } catch (error) {
       console.error("Failed to load data:", error);
       DomUtility.showFallbackText([
-        this.#fields.location,
+        this.#fields.locationPrimary,
+        this.#fields.locationSecondary,
         this.#fields.description,
       ]);
     } finally {
@@ -49,11 +57,24 @@ export default class CurrentForecastWidget {
   }
 
   #updateLocation(data) {
-    this.#fields.location.textContent = data.location;
+    if (!data.location) {
+      this.#fields.locationPrimary.textContent = "";
+      this.#fields.locationSecondary.textContent = "";
+      return;
+    }
+
+    if (typeof data.location === "string") {
+      const [city, country] = data.location.split(",").map((s) => s.trim());
+      this.#fields.locationPrimary.textContent = city || "";
+      this.#fields.locationSecondary.textContent = country || "";
+    } else if (typeof data.location === "object") {
+      this.#fields.locationPrimary.textContent = data.location.city || "";
+      this.#fields.locationSecondary.textContent = data.location.country || "";
+    }
   }
 
   #updateForecast(data) {
-    this.#fields.temp.textContent = `${data.temp}°`;
+    this.#fields.temp.textContent = `${data.temp.toFixed(0)}°`;
     this.#fields.description.textContent = data.conditions;
   }
 
@@ -62,21 +83,24 @@ export default class CurrentForecastWidget {
   }
 
   async #updateBanner(iconName) {
-  try {
-    const bannerUrl = await DomUtility.getWeatherBanner(iconName);
-    this.#element.style.backgroundImage = `url(${bannerUrl})`;
-    this.#element.style.backgroundSize = "cover";
-    this.#element.style.backgroundPosition = "bottom center";
-    this.#element.style.repeat = "no repeat";
-  } catch (err) {
-    console.error("Failed to update banner:", err);
+    try {
+      const bannerUrl = await DomUtility.getWeatherBanner(iconName);
+      this.#element.style.backgroundImage = `url(${bannerUrl})`;
+      this.#element.style.backgroundSize = "cover";
+      this.#element.style.backgroundPosition = "bottom center";
+      this.#element.style.repeat = "no repeat";
+    } catch (err) {
+      console.error("Failed to update banner:", err);
+    }
   }
-}
-
 
   setWeatherIcon(iconToUse) {
     const src = DomUtility.getAnimatedWeatherIcon(iconToUse);
     this.#fields.icon.src = src;
+  }
+
+  #getCurrentLocation() {
+    return `${this.#fields.locationPrimary.textContent}, ${this.#fields.locationSecondary.textContent}`;
   }
 
   render() {

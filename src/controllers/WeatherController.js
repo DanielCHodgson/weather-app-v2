@@ -2,7 +2,6 @@ import EventBus from "../utilities/EventBus";
 
 export default class WeatherController {
   #weatherDataService;
-  #dayIndex = 0;
 
   constructor(weatherDataService) {
     this.#weatherDataService = weatherDataService;
@@ -14,8 +13,8 @@ export default class WeatherController {
       await this.updateLocation(location);
     });
 
-     EventBus.on("dayUpdated", async (index) => {
-      await this.updateDailyForecast(index);
+    EventBus.on("daySubmitted", async (day) => {
+      await this.updateDay(day);
     });
   }
 
@@ -25,10 +24,18 @@ export default class WeatherController {
 
       this.#weatherDataService.getLocationService().setLocation(location);
 
-      const current = await this.#weatherDataService.getCurrentForecast();
-      const forecast = await this.#weatherDataService.getFortnightData();
+      const currentForecast =
+        await this.#weatherDataService.getCurrentForecast();
+      const fortnightForecast =
+        await this.#weatherDataService.getFortnightData();
+      const dayForecast = fortnightForecast[0];
 
-      EventBus.emit("locationUpdated", { location, current, forecast });
+      EventBus.emit("locationUpdated", {
+        location,
+        current: currentForecast,
+        forecast: fortnightForecast,
+        day: dayForecast,
+      });
     } catch (error) {
       console.error("Location update failed:", error);
       EventBus.emit("locationError", { message: error.message });
@@ -37,13 +44,18 @@ export default class WeatherController {
     }
   }
 
-  async updateDailyForecast(index) {
+  async updateDay(day) {
     try {
-      EventBus.emit("dailyForecastLoading", { location });
+      const currentForecast =
+        await this.#weatherDataService.getCurrentForecast();
+      const fortnightForecast =
+        await this.#weatherDataService.getFortnightData();
+      const dayForecast = fortnightForecast[day];
 
-      const forecast = await this.#weatherDataService.getFortnightData();
-
-      EventBus.emit("dailyForecastUpdated", forecast[index]);
+      EventBus.emit("dayUpdated", {
+        current: currentForecast,
+        day: dayForecast,
+      });
     } catch (error) {
       console.error("Daily forecast update failed:", error);
       EventBus.emit("dailyForecastError", { message: error.message });
@@ -52,11 +64,19 @@ export default class WeatherController {
     }
   }
 
-  getDay() {
-    return this.#dayIndex;
+  /*
+  async updateHourlyForecast(day) {
+    try {
+      EventBus.emit("hourlyForecastLoading", { location });
+      const forecast = day.hours;
+      EventBus.emit("hourlyForecastUpdated", forecast);
+    } catch (error) {
+      console.error("Hourly forecast update failed:", error);
+      EventBus.emit("hourlyForecastError", { message: error.message });
+    } finally {
+      EventBus.emit("hourlyForecastLoaded");
+    }
   }
 
-  setDay(index) {
-    return this.#dayIndex;
-  }
+  */
 }

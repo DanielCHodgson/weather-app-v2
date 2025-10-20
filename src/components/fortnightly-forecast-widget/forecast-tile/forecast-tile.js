@@ -1,17 +1,40 @@
 import htmlString from "./forecast-tile.html";
 import "./forecast-tile.css";
 import DomUtility from "../../../utilities/DomUtility";
+import EventBus from "../../../utilities/EventBus";
 
 export default class ForecastTile {
   #container;
   #element;
   #fields = {};
+  #dayIndex;
 
-  constructor(container) {
+  constructor(container, dayIndex) {
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
     this.#fields = this.cacheFields();
+    this.registerEvents();
     this.render();
+    this.#dayIndex = dayIndex;
+  }
+
+  registerEvents() {
+    this.#element.addEventListener("click", () => {
+      EventBus.emit("daySubmitted", this.#dayIndex);
+
+      this.#container
+        .querySelectorAll(".forecast-tile")
+        .forEach((tile) => tile.classList.remove("selected"));
+      this.#toggleSelected(true);
+    });
+  }
+
+  #toggleSelected(isSelected) {
+    if (isSelected) {
+      this.#element.classList.add("selected");
+    } else {
+      this.#element.classList.remove("selected");
+    }
   }
 
   cacheFields() {
@@ -54,8 +77,8 @@ export default class ForecastTile {
   }
 
   #updateForecast(data) {
-    this.#fields.actual.textContent = `${data.temp}°`;
-    this.#fields.feelsLike.textContent = `${data.feelslike}°`;
+    this.#fields.actual.textContent = `${data.temp.toFixed(0)}°`;
+    this.#fields.feelsLike.textContent = `${data.feelslike.toFixed(0)}°`;
     this.#fields.conditions.textContent = data.conditions;
   }
 

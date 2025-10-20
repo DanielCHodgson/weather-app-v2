@@ -29,7 +29,7 @@ export default class FortnightlyForecastWidget {
 
   addTiles() {
     for (let i = 0; i < 14; i++) {
-      this.#tiles.push(new ForecastTile(this.#element));
+      this.#tiles.push(new ForecastTile(this.#element, i));
     }
   }
 

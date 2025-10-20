@@ -24,9 +24,9 @@ export default class ForecastTile {
 
   async setData(data) {
     try {
-      //this.#fields.temp.textContent = `${data.actual}°`;
-      //this.#fields.time.textContent = this.#updateTime();
-      //await this.#updateIcon(data.icon);
+      this.#fields.temp.textContent = `${data.temp.toFixed(0)}°`;
+      this.#fields.time.textContent = this.#trimDatetime(data.datetime);
+      await this.#updateIcon(data.icon);
     } catch (error) {
       console.error("Failed to load tile data:", error);
       this.#fields.forEach((element) => {
@@ -37,12 +37,22 @@ export default class ForecastTile {
     }
   }
 
-  #updateTime(data) {
-    
+  #trimDatetime(datetime) {
+    if (!datetime) return "";
+
+    let timePart = datetime;
+    if (datetime.includes("T")) {
+      timePart = datetime.split("T")[1];
+    }
+
+    const [hours, minutes] = timePart.split(":");
+
+    if (!hours || !minutes) return "";
+    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`;
   }
 
-  async #updateIcon(data) {
-    this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(data.icon);
+  async #updateIcon(icon) {
+    this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(icon);
   }
 
   render() {

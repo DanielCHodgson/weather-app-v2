@@ -6,18 +6,26 @@
   border-radius: 4px;
   background-color: rgb(190, 116, 116);
   display: grid;
-  grid-template-columns: 2fr minmax(200px, 1fr) 2fr;
+  grid-template-columns: 2fr 200px 2fr;
   justify-items: center;
   align-items: center;
   text-align: center;
   color: white;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 97%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 97%,
+    rgba(0, 0, 0, 0) 100%
+  );
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-size: cover;
 
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 97%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 97%,
+    rgba(0, 0, 0, 0) 100%
+  );
   mask-repeat: no-repeat;
   mask-size: cover;
 }
@@ -27,9 +35,23 @@
 }
 
 .daily-forecast .location {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
   font-size: 3rem;
-  padding: 0 1rem;
   font-weight: bold;
+  justify-self: center;
+}
+
+.daily-forecast .location .primary {
+  font-size: 3rem;
+}
+
+.daily-forecast .location .secondary {
+  font-size: 1.8rem;
 }
 
 .daily-forecast .icon {
@@ -37,14 +59,15 @@
 }
 
 .daily-forecast .temp {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: bold;
 }
 .daily-forecast .description {
   font-size: 2rem;
 }
 
-.skeleton.location {
+.skeleton.location.primary,
+.skeleton.location.secondary {
   width: 120px;
   height: 18px;
   padding: 1rem;

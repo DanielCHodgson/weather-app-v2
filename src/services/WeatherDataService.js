@@ -25,6 +25,7 @@ export default class WeatherDataService {
         this.#isCelsius = useCelsius;
         localStorage.setItem("isCelsius", JSON.stringify(useCelsius));
         EventBus.emit("unitUpdated", this.#isCelsius ? "C" : "F");
+        this.refreshData();
       }
     });
   }
@@ -41,41 +42,13 @@ export default class WeatherDataService {
       return this.#lastFetchedData;
     }
 
-    const data = await this.#weatherAPI.getData(location);
+    const data = await this.#weatherAPI.getData(location, { useCelsius: this.#isCelsius });
 
-    const convertedData = this.#convertDataTemperatures(data);
-    this.#lastFetchedData = convertedData;
+    this.#lastFetchedData = data;
     this.#lastFetchedLocation = location;
     this.#lastFetchedTime = now;
 
-    return convertedData;
-  }
-
-  #convertDataTemperatures(data) {
-    const cloned = JSON.parse(JSON.stringify(data));
-
-    if (
-      cloned.currentConditions &&
-      typeof cloned.currentConditions.temp === "number"
-    ) {
-      cloned.currentConditions.temp = this.#convertTemperature(
-        cloned.currentConditions.temp,
-      );
-    }
-
-    if (cloned.days && Array.isArray(cloned.days)) {
-      cloned.days = cloned.days.map((day) => ({
-        ...day,
-        temp: this.#convertTemperature(day.temp),
-        tempmax: this.#convertTemperature(day.tempmax),
-        tempmin: this.#convertTemperature(day.tempmin),
-        feelslike: this.#convertTemperature(day.feelslike),
-        feelslikemax: this.#convertTemperature(day.feelslikemax),
-        feelslikemin: this.#convertTemperature(day.feelslikemin), 
-      }));
-    }
-
-    return cloned;
+    return data;
   }
 
   async getAllData() {
@@ -94,23 +67,13 @@ export default class WeatherDataService {
     return data.currentConditions;
   }
 
-  #convertTemperature(value) {
-    if (typeof value !== "number") return value;
-    if (this.#isCelsius) {
-      const celsius = ((value - 32) * 5) / 9;
-      return Math.round(celsius);
-    }
-    return Math.round(value);
-  }
-
   async refreshData() {
     const location = await this.#locationService.getLocation();
-    const data = await this.#weatherAPI.getData(location);
-    const convertedData = this.#convertDataTemperatures(data);
-    this.#lastFetchedData = convertedData;
+    const data = await this.#weatherAPI.getData(location, { useCelsius: this.#isCelsius });
+    this.#lastFetchedData = data;
     this.#lastFetchedLocation = location;
     this.#lastFetchedTime = Date.now();
-    return convertedData;
+    return data;
   }
 
   getLocationService() {
