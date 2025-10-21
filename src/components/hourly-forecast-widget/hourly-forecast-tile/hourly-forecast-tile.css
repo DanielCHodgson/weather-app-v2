@@ -4,8 +4,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
+  justify-content: space-between;
+  gap: 1.7rem;
+  padding-top: 0.5rem;
   scroll-snap-align: end;
   background-color: var(--tile-bg-color);
   border-radius: 8px;
