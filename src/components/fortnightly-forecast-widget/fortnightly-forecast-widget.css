@@ -1,21 +1,51 @@
 .fortnightly-forecast {
   width: 100%;
   height: 100%;
-  padding: 0 1rem;
+  padding: 0 0.7rem;
   display: grid;
   grid-auto-flow: row;
   grid-auto-rows: minmax(80, 1fr);
   place-items: center;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
 
   overflow-y: auto;
-  scroll-snap-type: y mandatory;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
 }
 
 .fortnightly-forecast::-webkit-scrollbar {
-  display: none;
+  height: 6px;
+  background: transparent;
 }
+
+.fortnightly-forecast::-webkit-scrollbar-track {
+  background: transparent;
+  margin-inline: 8px;
+}
+
+.fortnightly-forecast::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0);
+  border-radius: 3px;
+  transition:
+    background 0.3s ease,
+    opacity 0.3s ease;
+  opacity: 0;
+}
+
+.fortnightly-forecast:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  opacity: 1;
+}
+
+.fortnightly-forecast::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.fortnightly-forecast:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.18) transparent;
+}
+

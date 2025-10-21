@@ -7,9 +7,9 @@
   border-radius: 6px;
 
   place-self: center;
-
   display: flex;
   gap: 0.5rem;
+
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
