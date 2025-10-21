@@ -1,8 +1,10 @@
-body {
+.app {
+  max-width: 100%;
   display: grid;
   grid-template-columns: 400px 1fr;
-  background-color: #bac9e2;
+  grid-template-rows: 100vh;
 
+  background-color: #bac9e2;
   font-family:
     Inter,
     ui-sans-serif,
@@ -12,8 +14,6 @@ body {
     Roboto,
     "Helvetica Neue",
     Arial;
-
-    box-sizing: border-box;
 }
 
 .skeleton {

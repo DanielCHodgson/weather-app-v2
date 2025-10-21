@@ -1,33 +1,23 @@
 .hourly-forecast {
-  width: 96%;
+  width: 98%;
   height: 150px;
   padding: 0.2rem;
   box-sizing: border-box;
-
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 90px;
-  grid-auto-rows: minmax(100px, 1fr);
-  place-items: center;
-  gap: 0.2rem;
-
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 0.2rem;
-
   background-color: #fff;
   border-radius: 6px;
 
-  padding-bottom: calc(0.2rem + 8px);
+  place-self: center;
 
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
 
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
-  cursor: grab;
-
   transition: scrollbar-color 0.3s ease;
 }
 
@@ -44,7 +34,9 @@
 .hourly-forecast::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0);
   border-radius: 3px;
-  transition: background 0.3s ease, opacity 0.3s ease;
+  transition:
+    background 0.3s ease,
+    opacity 0.3s ease;
   opacity: 0;
 }
 

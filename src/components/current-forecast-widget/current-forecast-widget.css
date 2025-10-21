@@ -1,14 +1,15 @@
 .daily-forecast {
   width: 100%;
-  min-width: 500px;
   height: 100%;
   padding: 0.25em 0.5em;
   border-radius: 4px;
   background-color: rgb(190, 116, 116);
+  
   display: grid;
   grid-template-columns: 2fr 200px 2fr;
   justify-items: center;
   align-items: center;
+
   text-align: center;
   color: white;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);

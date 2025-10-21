@@ -63,20 +63,4 @@ export default class WeatherController {
       EventBus.emit("dailyForecastLoaded");
     }
   }
-
-  /*
-  async updateHourlyForecast(day) {
-    try {
-      EventBus.emit("hourlyForecastLoading", { location });
-      const forecast = day.hours;
-      EventBus.emit("hourlyForecastUpdated", forecast);
-    } catch (error) {
-      console.error("Hourly forecast update failed:", error);
-      EventBus.emit("hourlyForecastError", { message: error.message });
-    } finally {
-      EventBus.emit("hourlyForecastLoaded");
-    }
-  }
-
-  */
 }

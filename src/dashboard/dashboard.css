@@ -1,6 +1,19 @@
 .dashboard {
-    display: grid;
-    grid-template-rows: 300px 1fr;
-    justify-items: center;
-    gap: 1.5rem;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto 1fr;
+  gap: 1rem;
+}
+
+.dashboard h3 {
+  color: #000000;
+  padding: 0.5rem;
+}
+
+.banner,
+.hourly,
+.conditions {
+  width: 100%;
+  overflow: hidden;
 }

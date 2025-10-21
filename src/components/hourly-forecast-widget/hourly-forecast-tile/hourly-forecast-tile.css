@@ -1,15 +1,15 @@
 .hourly-forecast-tile {
-  width: 90px;
-  height: 100%;
+  flex: 0 0 90px;
+  padding-top: 0.5rem;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   gap: 1.7rem;
-  padding-top: 0.5rem;
-  scroll-snap-align: end;
-  background-color: var(--tile-bg-color);
+
+  scroll-snap-align: start;
+  background-color: #FFF;
   border-radius: 8px;
-  box-shadow: var(--tile-box-shadow);
   text-align: center;
 }

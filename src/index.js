@@ -11,18 +11,10 @@ const weatherAPI = new WeatherAPIService();
 const locationService = new LocationService();
 const weatherDataService = new WeatherDataService(weatherAPI, locationService);
 
-const leftPanel = new LeftPanel(document.querySelector("body"));
-const dashboard = new Dashboard(document.querySelector("body"));
+const leftPanel = new LeftPanel(document.querySelector(".app"));
+const dashboard = new Dashboard(document.querySelector(".app"));
 
-const uiComponents = {
-  forecast: leftPanel.getForecastComponent(),
-  current: dashboard.getCurrentWeatherComponent(),
-};
-
-const weatherController = new WeatherController(
-  weatherDataService,
-  uiComponents,
-);
+const weatherController = new WeatherController(weatherDataService,);
 
 weatherController.updateLocation(await locationService.getLocation());
 
