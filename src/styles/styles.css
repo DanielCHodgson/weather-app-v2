@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 .app {
   max-width: 100%;
   display: grid;
@@ -6,7 +8,7 @@
 
   background-color: #bac9e2;
   font-family:
-    Inter,
+    "Roboto",
     ui-sans-serif,
     system-ui,
     -apple-system,

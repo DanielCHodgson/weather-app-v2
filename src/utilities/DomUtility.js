@@ -35,6 +35,19 @@ export default class DomUtility {
     }
   }
 
+  static async getIcon(name) {
+    try {
+      const module = await import(`../res/icons/${name}.svg`);
+      return module.default;
+    } catch (err) {
+      console.warn(`Icon "${name}" not found, using default.`);
+      const defaultModule = await import(
+        `../res/icons/blank.svg`
+      );
+      return defaultModule.default;
+    }
+  }
+
   static async getWeatherBanner(name) {
     try {
       const module = await import(`../res/weather-icons/banners/${name}.jpg`);
@@ -48,9 +61,6 @@ export default class DomUtility {
     }
   }
 
-  async updateIcon(img, iconName) {
-    img.src = await this.getAnimatedWeatherIcon(iconName);
-  }
 
   static showFallbackText(field) {
     field.textContent = "No data";

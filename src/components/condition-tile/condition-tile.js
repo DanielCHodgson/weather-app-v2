@@ -7,9 +7,13 @@ export default class ConditionTile {
   #container;
   #element;
   #fields;
+  #type;
+  #formatter;
 
-  constructor(container) {
+  constructor(container, type, formatter = null) {
     this.#container = container;
+    this.#type = type;
+    this.#formatter = formatter;
     this.#element = DomUtility.stringToHTML(htmlString);
     this.#fields = this.cacheFields();
     this.registerEvents();
@@ -18,6 +22,7 @@ export default class ConditionTile {
 
   cacheFields() {
     return {
+      title: this.#element.querySelector(".title"),
       value: this.#element.querySelector(".value"),
       description: this.#element.querySelector(".description"),
       icon: this.#element.querySelector(".icon"),
@@ -25,25 +30,53 @@ export default class ConditionTile {
   }
 
   registerEvents() {
-    EventBus.on("locationUpdated", (data) => {});
+    EventBus.on("locationUpdated", (data) => this.handleUpdate(data));
+    EventBus.on("dayUpdated", (data) => this.handleUpdate(data));
+  }
 
-    EventBus.on("dayUpdated", (data) => {});
+  handleUpdate(data) {
+    const conditionData = data[this.#type];
+    if (conditionData) {
+      this.setData(conditionData);
+    } else {
+      console.warn(`No data found for condition type "${this.#type}"`);
+    }
   }
 
   async setData(data) {
     try {
+      let displayData = data;
 
-      // Do stuff with data to update the fields
+      if (typeof this.#formatter === "function") {
+        displayData = this.#formatter(data);
+      }
 
+      if (displayData.title) {
+        this.#fields.title.textContent = displayData.title;
+      }
+      if (displayData.icon) {
+        this.#fields.icon.src = this.#updateIcon(this.#type, false);
+      }
+      if (displayData.value) {
+        this.#fields.value.textContent = displayData.value;
+      }
+      if (displayData.description) {
+        this.#fields.description.textContent = displayData.description;
+      }
     } catch (error) {
-      console.error("Failed to load data:", error);
+      console.error(`Failed to load data for type "${this.#type}":`, error);
       DomUtility.showFallbackText([
+        this.#fields.title,
         this.#fields.value,
         this.#fields.description,
       ]);
     } finally {
       DomUtility.removeSkeletons(this.#fields);
     }
+  }
+
+  async #updateIcon(icon) {
+    this.#fields.icon.src = await DomUtility.getIcon(icon);
   }
 
   render() {

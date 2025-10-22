@@ -30,11 +30,22 @@ export default class WeatherController {
         await this.#weatherDataService.getFortnightData();
       const dayForecast = fortnightForecast[0];
 
+      const windForecast = {
+        speed: currentForecast.windspeed,
+        direction: currentForecast.winddir,
+      };
+
+      const uvForecast = {
+        index: dayForecast.uvindex,
+      };
+
       EventBus.emit("locationUpdated", {
         location,
         current: currentForecast,
         forecast: fortnightForecast,
         day: dayForecast,
+        wind: windForecast,
+        uv: uvForecast,
       });
     } catch (error) {
       console.error("Location update failed:", error);
@@ -52,9 +63,20 @@ export default class WeatherController {
         await this.#weatherDataService.getFortnightData();
       const dayForecast = fortnightForecast[day];
 
+      const windForecast = {
+        speed: dayForecast.windspeed,
+        direction: dayForecast.winddir,
+      };
+
+      const uvForecast = {
+        index: dayForecast.uvindex,
+      };
+
       EventBus.emit("dayUpdated", {
         current: currentForecast,
         day: dayForecast,
+        wind: windForecast,
+        uv: uvForecast,
       });
     } catch (error) {
       console.error("Daily forecast update failed:", error);

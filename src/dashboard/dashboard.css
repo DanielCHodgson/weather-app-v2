@@ -8,12 +8,22 @@
 
 .dashboard h3 {
   color: #000000;
-  padding: 0.5rem;
+  padding: 0.5rem 0;
 }
 
-.banner,
-.hourly,
-.conditions {
+.dashboard .banner,
+.dashboard .hourly,
+.dashboard .conditions {
   width: 100%;
   overflow: hidden;
+}
+
+.dashboard .conditions,
+.dashboard .hourly {
+  padding: 1rem;
+}
+
+.dashboard .condition-tiles{
+  display: flex;
+  gap: 2rem;
 }

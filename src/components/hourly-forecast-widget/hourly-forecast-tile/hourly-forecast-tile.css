@@ -1,15 +1,22 @@
 .hourly-forecast-tile {
   flex: 0 0 90px;
-  padding-top: 0.5rem;
+  padding-top: 1rem;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  gap: 1.7rem;
 
   scroll-snap-align: start;
   background-color: #FFF;
   border-radius: 8px;
   text-align: center;
+}
+
+.hourly-forecast-tile .temp {
+ font-weight: bold;
+}
+
+.hourly-forecast-tile .time {
+  color: #555;
 }
