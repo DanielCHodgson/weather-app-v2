@@ -57,7 +57,8 @@ export default class WeatherController {
         .getLocationService()
         .getName(location);
 
-      const { wind, uv, humidity } = this.#extractConditionsData(dayForecast);
+      const { wind, uv, humidity, pressure, suntimes } =
+        this.#extractConditionsData(dayForecast);
 
       EventBus.emit("weatherUpdated", {
         location: locationName,
@@ -68,6 +69,8 @@ export default class WeatherController {
         wind: wind,
         uv: uv,
         humidity: humidity,
+        pressure: pressure,
+        suntimes: suntimes,
       });
     } catch (error) {
       console.error("Daily forecast update failed:", error);
@@ -90,6 +93,8 @@ export default class WeatherController {
       wind: { speed: forecast.windspeed, direction: forecast.winddir },
       uv: { index: forecast.uvindex },
       humidity: { humidity: forecast.humidity },
+      pressure: { pressure: forecast.pressure },
+      suntimes: { sunrise: forecast.sunrise, sunset: forecast.sunset },
     };
   }
 }

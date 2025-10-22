@@ -30,7 +30,6 @@ export default class ConditionTile {
   }
 
   registerEvents() {
-    //EventBus.on("locationUpdated", (data) => this.handleUpdate(data));
     EventBus.on("weatherUpdated", (data) => this.handleUpdate(data));
   }
 
@@ -46,7 +45,6 @@ export default class ConditionTile {
   async setData(data) {
     try {
       let displayData = data;
-
       if (typeof this.#formatter === "function") {
         displayData = this.#formatter(data);
       }

@@ -13,6 +13,8 @@ export default class Dashboard {
   #windTile;
   #uvTile;
   #humidityTile;
+  #pressureTile;
+  #sunTimesTile;
 
   constructor(container) {
     this.#container = container;
@@ -30,7 +32,7 @@ export default class Dashboard {
     );
 
     this.#windTile = new ConditionTile(
-      this.#element.querySelector(".condition-tiles"),
+      this.#element.querySelector(".tile-container"),
       "wind",
       (data) => ({
         title: "Wind",
@@ -41,7 +43,7 @@ export default class Dashboard {
     );
 
     this.#uvTile = new ConditionTile(
-      this.#element.querySelector(".condition-tiles"),
+      this.#element.querySelector(".tile-container"),
       "uv",
       (data) => ({
         title: "UV",
@@ -52,12 +54,34 @@ export default class Dashboard {
     );
 
     this.#humidityTile = new ConditionTile(
-      this.#element.querySelector(".condition-tiles"),
+      this.#element.querySelector(".tile-container"),
       "humidity",
       (data) => ({
         title: "Humidity",
         icon: "../../res/icons/humidity.svg",
         value: `${data.humidity}%`,
+        description: data.level,
+      }),
+    );
+
+    this.#pressureTile = new ConditionTile(
+      this.#element.querySelector(".tile-container"),
+      "pressure",
+      (data) => ({
+        title: "Pressure",
+        icon: "../../res/icons/pressure.svg",
+        value: `${data.pressure}mb`,
+        description: data.level,
+      }),
+    );
+
+    this.#sunTimesTile = new ConditionTile(
+      this.#element.querySelector(".tile-container"),
+      "suntimes",
+      (data) => ({
+        title: "Sunrise & Sunset",
+        icon: "../../res/icons/suntimes.svg",
+        value: `${data.sunrise} - ${data.sunset}`,
         description: data.level,
       }),
     );
