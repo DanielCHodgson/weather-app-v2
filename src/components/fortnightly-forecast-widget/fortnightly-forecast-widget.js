@@ -18,6 +18,10 @@ export default class FortnightlyForecastWidget {
   }
 
   registerEvents() {
+    EventBus.on("locationUpdated", (data) => {
+      this.#tiles.forEach(tile => tile.toggleSelected());
+    });
+
     EventBus.on("weatherUpdated", (data) => {
       this.setData(data.fortnight);
     });

@@ -25,11 +25,11 @@ export default class ForecastTile {
       this.#container
         .querySelectorAll(".forecast-tile")
         .forEach((tile) => tile.classList.remove("selected"));
-      this.#toggleSelected(true);
+      this.toggleSelected(true);
     });
   }
 
-  #toggleSelected(isSelected) {
+  toggleSelected(isSelected) {
     if (isSelected) {
       this.#element.classList.add("selected");
     } else {
