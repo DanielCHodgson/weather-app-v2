@@ -24,15 +24,18 @@ export default class Search {
   }
 
   addEventListeners() {
-    this.#form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const value = this.#input.value.trim();
-      if (!value) {
-        this.showMessage("Please enter a location name.", "error");
-        return;
+    this.#input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        this.#handleSubmit(event);
       }
-      EventBus.emit(this.#signal, value);
     });
+
+    this.#element
+      .querySelector(".clear-btn")
+      .addEventListener("click", (event) => {
+        this.#handleClearClick(event);
+      });
   }
 
   registerEventHandlers() {
@@ -40,7 +43,7 @@ export default class Search {
       this.showMessage(error.message, "error");
     });
 
-    EventBus.on("weatherUpdated", (data) => {
+    EventBus.on("weatherUpdated", () => {
       this.clearMessage();
     });
   }
@@ -52,6 +55,22 @@ export default class Search {
 
   clearMessage() {
     this.#message.textContent = "";
+  }
+
+  #handleSubmit(event) {
+    event.preventDefault();
+    const value = this.#input.value.trim();
+    if (!value) {
+      this.showMessage("Please enter a location name.", "error");
+      return;
+    }
+    EventBus.emit(this.#signal, value);
+  }
+
+  #handleClearClick(event) {
+    event.preventDefault();
+    this.#input.value = "";
+    this.clearMessage();
   }
 
   render() {

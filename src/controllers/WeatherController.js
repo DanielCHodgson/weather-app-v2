@@ -9,8 +9,9 @@ export default class WeatherController {
   }
 
   registerEvents() {
-    EventBus.on("locationSubmitted", (location) =>
-      this.updateLocation(location),
+    EventBus.on("locationSubmitted", (location) => {
+      this.updateLocation(location);
+    }
     );
     EventBus.on("daySubmitted", (day) =>
       this.updateWeather(this.#weatherDataService.getCurrentLocation(), day),
@@ -40,7 +41,7 @@ export default class WeatherController {
 
   async updateWeather(location, dayIndex = 0) {
     if (!location) {
-      EventBus.emit("dayError", { message: "Location not provided." });
+      EventBus.emit("weatherError", { message: "Location not provided." });
       return;
     }
     try {
@@ -73,10 +74,10 @@ export default class WeatherController {
         suntimes: suntimes,
       });
     } catch (error) {
-      console.error("Daily forecast update failed:", error);
-      EventBus.emit("dayError", { message: error.message, error });
+      console.error("Forecast update failed:", error);
+      EventBus.emit("weatherError", { message: error.message, error });
     } finally {
-      EventBus.emit("dayLoaded");
+      EventBus.emit("weatherLoaded");
     }
   }
 
