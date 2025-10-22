@@ -18,10 +18,10 @@ export default class HourlyForecastWidget {
   }
 
   registerEvents() {
-    EventBus.on("locationUpdated", (data) => {
-      this.setData(data.day);
-    });
-    EventBus.on("dayUpdated", (data) => {
+    //EventBus.on("locationUpdated", (data) => {
+     // this.setData(data.day);
+   // });
+    EventBus.on("weatherUpdated", (data) => {
       this.setData(data.day);
     });
   }

@@ -12,6 +12,7 @@ export default class Dashboard {
   #hourlyWeather;
   #windTile;
   #uvTile;
+  #humidityTile;
 
   constructor(container) {
     this.#container = container;
@@ -44,8 +45,19 @@ export default class Dashboard {
       "uv",
       (data) => ({
         title: "UV",
-       icon: "../../res/icons/uv.svg",
+        icon: "../../res/icons/uv.svg",
         value: `Index: ${data.index}`,
+        description: data.level,
+      }),
+    );
+
+    this.#humidityTile = new ConditionTile(
+      this.#element.querySelector(".condition-tiles"),
+      "humidity",
+      (data) => ({
+        title: "Humidity",
+        icon: "../../res/icons/humidity.svg",
+        value: `${data.humidity}%`,
         description: data.level,
       }),
     );

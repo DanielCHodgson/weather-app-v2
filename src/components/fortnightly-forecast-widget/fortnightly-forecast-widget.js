@@ -18,8 +18,8 @@ export default class FortnightlyForecastWidget {
   }
 
   registerEvents() {
-    EventBus.on("locationUpdated", (data) => {
-      this.setData(data.forecast);
+    EventBus.on("weatherUpdated", (data) => {
+      this.setData(data.fortnight);
     });
   }
 

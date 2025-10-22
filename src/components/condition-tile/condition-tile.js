@@ -30,8 +30,8 @@ export default class ConditionTile {
   }
 
   registerEvents() {
-    EventBus.on("locationUpdated", (data) => this.handleUpdate(data));
-    EventBus.on("dayUpdated", (data) => this.handleUpdate(data));
+    //EventBus.on("locationUpdated", (data) => this.handleUpdate(data));
+    EventBus.on("weatherUpdated", (data) => this.handleUpdate(data));
   }
 
   handleUpdate(data) {

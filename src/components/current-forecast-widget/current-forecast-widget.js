@@ -17,14 +17,8 @@ export default class CurrentForecastWidget {
   }
 
   registerEvents() {
-    EventBus.on("locationUpdated", (data) => {
-      this.setData(data.current);
-    });
-
-    EventBus.on("dayUpdated", (data) => {
-      const forecast = data.day;
-      forecast.location = this.#getCurrentLocation();
-      this.setData(forecast);
+    EventBus.on("weatherUpdated", (data) => {
+      this.setData(data);
     });
   }
 
@@ -40,10 +34,18 @@ export default class CurrentForecastWidget {
 
   async setData(data) {
     try {
-      this.#updateLocation(data);
-      this.#updateForecast(data);
-      await this.#updateIcon(data.icon);
-      await this.#updateBanner(data.icon);
+      if(data.dayIndex === 0) {
+        this.#updateLocation(data.location);
+        this.#updateForecast(data.current);
+        await this.#updateIcon(data.current.icon);
+        await this.#updateBanner(data.current.icon);
+      }
+      else {
+      this.#updateLocation(data.location);
+      this.#updateForecast(data.day);
+      await this.#updateIcon(data.day.icon);
+      await this.#updateBanner(data.day.icon);
+      }
     } catch (error) {
       console.error("Failed to load data:", error);
       DomUtility.showFallbackText([
@@ -56,20 +58,14 @@ export default class CurrentForecastWidget {
     }
   }
 
-  #updateLocation(data) {
-    if (!data.location) {
-      this.#fields.locationPrimary.textContent = "";
-      this.#fields.locationSecondary.textContent = "";
-      return;
-    }
-
-    if (typeof data.location === "string") {
-      const [city, country] = data.location.split(",").map((s) => s.trim());
+  #updateLocation(location) {
+    if (typeof location === "string") {
+      const [city, country] = location.split(",").map((s) => s.trim());
       this.#fields.locationPrimary.textContent = city || "";
       this.#fields.locationSecondary.textContent = country || "";
-    } else if (typeof data.location === "object") {
-      this.#fields.locationPrimary.textContent = data.location.city || "";
-      this.#fields.locationSecondary.textContent = data.location.country || "";
+    } else if (typeof location === "object" && location !== null) {
+      this.#fields.locationPrimary.textContent = location.city || "";
+      this.#fields.locationSecondary.textContent = location.country || "";
     }
   }
 
@@ -97,10 +93,6 @@ export default class CurrentForecastWidget {
   setWeatherIcon(iconToUse) {
     const src = DomUtility.getAnimatedWeatherIcon(iconToUse);
     this.#fields.icon.src = src;
-  }
-
-  #getCurrentLocation() {
-    return `${this.#fields.locationPrimary.textContent}, ${this.#fields.locationSecondary.textContent}`;
   }
 
   render() {

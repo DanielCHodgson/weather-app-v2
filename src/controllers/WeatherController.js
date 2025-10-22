@@ -9,8 +9,12 @@ export default class WeatherController {
   }
 
   registerEvents() {
-    EventBus.on("locationSubmitted", (location) => this.updateLocation(location));
-    EventBus.on("daySubmitted", (day) => this.updateDay(day));
+    EventBus.on("locationSubmitted", (location) =>
+      this.updateLocation(location),
+    );
+    EventBus.on("daySubmitted", (day) =>
+      this.updateWeather(this.#weatherDataService.getCurrentLocation(), day),
+    );
   }
 
   async updateLocation(location) {
@@ -23,20 +27,9 @@ export default class WeatherController {
       EventBus.emit("locationLoading", { location });
 
       this.#weatherDataService.getLocationService().setLocation(location);
-      const { currentForecast, fortnightForecast } = await this.#getForecastData();
+      this.updateWeather(location, 0);
 
-      const dayForecast = fortnightForecast[0];
-      const wind = this.#buildWindData(currentForecast);
-      const uv = this.#buildUVData(dayForecast);
-
-      EventBus.emit("locationUpdated", {
-        location,
-        current: currentForecast,
-        forecast: fortnightForecast,
-        day: dayForecast,
-        wind,
-        uv,
-      });
+      EventBus.emit("locationUpdated", location);
     } catch (error) {
       console.error("Location update failed:", error);
       EventBus.emit("locationError", { message: error.message, error });
@@ -45,19 +38,37 @@ export default class WeatherController {
     }
   }
 
-  async updateDay(day) {
+  async updateWeather(location, dayIndex = 0) {
+    if (!location) {
+      EventBus.emit("dayError", { message: "Location not provided." });
+      return;
+    }
     try {
-      const { currentForecast, fortnightForecast } = await this.#getForecastData();
-      const dayForecast = fortnightForecast?.[day];
+      const { currentForecast, fortnightForecast } =
+        await this.#getForecastData();
+
+      const dayForecast = fortnightForecast?.[dayIndex];
 
       if (!dayForecast) {
-        throw new Error(`No forecast found for day index ${day}`);
+        throw new Error(`No forecast found for day index ${dayIndex}`);
       }
 
-      const wind = this.#buildWindData(dayForecast);
-      const uv = this.#buildUVData(dayForecast);
+      const locationName = await this.#weatherDataService
+        .getLocationService()
+        .getName(location);
 
-      EventBus.emit("dayUpdated", { current: currentForecast, day: dayForecast, wind, uv });
+      const { wind, uv, humidity } = this.#extractConditionsData(dayForecast);
+
+      EventBus.emit("weatherUpdated", {
+        location: locationName,
+        fortnight: fortnightForecast,
+        current: currentForecast,
+        day: dayForecast,
+        dayIndex: dayIndex,
+        wind: wind,
+        uv: uv,
+        humidity: humidity,
+      });
     } catch (error) {
       console.error("Daily forecast update failed:", error);
       EventBus.emit("dayError", { message: error.message, error });
@@ -74,11 +85,11 @@ export default class WeatherController {
     return { currentForecast, fortnightForecast };
   }
 
-  #buildWindData(forecast) {
-    return { speed: forecast.windspeed, direction: forecast.winddir };
-  }
-
-  #buildUVData(forecast) {
-    return { index: forecast.uvindex };
+  #extractConditionsData(forecast) {
+    return {
+      wind: { speed: forecast.windspeed, direction: forecast.winddir },
+      uv: { index: forecast.uvindex },
+      humidity: { humidity: forecast.humidity },
+    };
   }
 }

@@ -79,4 +79,8 @@ export default class WeatherDataService {
   getLocationService() {
     return this.#locationService;
   }
+
+  getCurrentLocation() {
+    return this.#locationService.getLocation();
+  }
 }
