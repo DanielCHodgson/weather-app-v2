@@ -42,7 +42,7 @@ export default class WeatherDataService {
       return this.#lastFetchedData;
     }
 
-    const data = await this.#weatherAPI.getData(location, { useCelsius: this.#isCelsius });
+    const data = await this.#weatherAPI.getData(location, this.#isCelsius);
 
     this.#lastFetchedData = data;
     this.#lastFetchedLocation = location;
@@ -69,7 +69,7 @@ export default class WeatherDataService {
 
   async refreshData() {
     const location = await this.#locationService.getLocation();
-    const data = await this.#weatherAPI.getData(location, { useCelsius: this.#isCelsius });
+    const data = await this.#weatherAPI.getData(location, this.#isCelsius);
     this.#lastFetchedData = data;
     this.#lastFetchedLocation = location;
     this.#lastFetchedTime = Date.now();

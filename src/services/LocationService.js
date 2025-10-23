@@ -28,32 +28,26 @@ export default class LocationService {
     return this.getUserLocationData();
   }
 
-  async getName() {
-    const location = await this.getLocation();
-
-    if (typeof location === "string") {
-      return this.#resolveName({ query: location });
+  async getLocation() {
+    if (!this.#locationPromise) {
+      this.#locationPromise = this.initLocation();
     }
-
-    if (location.latitude && location.longitude) {
-      return this.#resolveName({
-        latitude: location.latitude,
-        longitude: location.longitude,
-      });
-    }
-
-    return "Unknown";
+    return this.#locationPromise;
   }
 
-  async #resolveName({ query, latitude, longitude }) {
+  setLocation(newLocation) {
+    this.#locationPromise = Promise.resolve(newLocation);
+  }
+
+  async resolveName(location) {
     try {
       let url;
 
-      if (query) {
-        const encoded = encodeURIComponent(query);
+      if (typeof location === "string") {
+        const encoded = encodeURIComponent(location);
         url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&q=${encoded}&limit=1`;
-      } else if (latitude && longitude) {
-        url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&lat=${latitude}&lon=${longitude}`;
+      } else if (location.latitude && location.longitude) {
+        url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&lat=${location.latitude}&lon=${location.longitude}`;
       } else {
         throw new Error("Invalid location parameters");
       }
@@ -63,7 +57,7 @@ export default class LocationService {
 
       if (!result) {
         throw new Error(
-          `No matching location found for "${query ?? "coordinates"}"`,
+          `No matching location found for "${typeof location === "string" ? location : "coordinates"}"`,
         );
       }
 
@@ -71,6 +65,11 @@ export default class LocationService {
     } catch (error) {
       throw new Error(error.message || "Failed to resolve location");
     }
+  }
+
+  async getName() {
+    const location = await this.getLocation();
+    return this.resolveName(location);
   }
 
   async #fetchJson(url) {
@@ -95,16 +94,5 @@ export default class LocationService {
       address.country || display.split(",").pop()?.trim() || "Unknown Country";
 
     return `${city}, ${country}`;
-  }
-
-  async getLocation() {
-    if (!this.#locationPromise) {
-      this.#locationPromise = this.initLocation();
-    }
-    return this.#locationPromise;
-  }
-
-  setLocation(newLocation) {
-    this.#locationPromise = Promise.resolve(newLocation);
   }
 }

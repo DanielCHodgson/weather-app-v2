@@ -1,55 +1,25 @@
 export default class WeatherAPIService {
   #apiKey;
-  #cacheDuration;
+  #cacheService;
 
-  constructor() {
+  constructor(cacheService) {
     this.#apiKey = "G68GFGKVW4WNQHG4WESJWAUKV";
-    this.#cacheDuration = 30 * 60 * 1000;
+    this.#cacheService = cacheService;
   }
 
   async getData(location, useCelsius = true) {
     try {
-      let locationQuery;
-
-      if (typeof location === "string") {
-        locationQuery = location.trim();
-        if (!locationQuery)
-          throw new Error("Please enter a location name.");
-      } else if (
-        typeof location === "object" &&
-        location.latitude &&
-        location.longitude
-      ) {
-        locationQuery = `${location.latitude},${location.longitude}`;
-      } else {
-        throw new Error("Invalid location format");
-      }
-
+      const locationQuery = this.#normalizeLocation(location);
       const unitGroup = useCelsius ? "metric" : "us";
 
-      const cacheKey = `weather_${locationQuery}_${unitGroup}`;
-      const cached = this.#getFromCache(cacheKey);
+      const cacheKey = this.#cacheService.generateKey(locationQuery, unitGroup);
+      const cached = await this.#cacheService.get(cacheKey);
       if (cached) {
         return cached;
       }
-
-      const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${encodeURIComponent(
-        locationQuery
-      )}?unitGroup=${unitGroup}&key=${this.#apiKey}`;
-
-      const response = await fetch(url, { mode: "cors" });
-
-      if (!response.ok) {
-        if (response.status === 400 || response.status === 404) {
-          throw new Error(
-            `Could not find weather for "${locationQuery}". Please check your spelling or try another location.`
-          );
-        }
-        throw new Error(`Weather API error (status ${response.status})`);
-      }
-
-      const weatherData = await response.json();
-      this.#saveToCache(cacheKey, weatherData);
+      const weatherData = await this.#fetchFromAPI(locationQuery, unitGroup);
+      
+      await this.#cacheService.set(cacheKey, weatherData);
 
       return weatherData;
     } catch (error) {
@@ -58,26 +28,40 @@ export default class WeatherAPIService {
     }
   }
 
-  #getFromCache(key) {
-    const cached = localStorage.getItem(key);
-    if (!cached) return null;
-
-    const { timestamp, data } = JSON.parse(cached);
-    const isExpired = Date.now() - timestamp > this.#cacheDuration;
-
-    if (isExpired) {
-      localStorage.removeItem(key);
-      return null;
+  #normalizeLocation(location) {
+    if (typeof location === "string") {
+      const trimmed = location.trim();
+      if (!trimmed) {
+        throw new Error("Please enter a location name.");
+      }
+      return trimmed;
+    } else if (
+      typeof location === "object" &&
+      location.latitude &&
+      location.longitude
+    ) {
+      return `${location.latitude},${location.longitude}`;
+    } else {
+      throw new Error("Invalid location format");
     }
-
-    return data;
   }
 
-  #saveToCache(key, data) {
-    const payload = {
-      timestamp: Date.now(),
-      data,
-    };
-    localStorage.setItem(key, JSON.stringify(payload));
+  async #fetchFromAPI(locationQuery, unitGroup) {
+    const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${encodeURIComponent(
+      locationQuery
+    )}?unitGroup=${unitGroup}&key=${this.#apiKey}`;
+
+    const response = await fetch(url, { mode: "cors" });
+
+    if (!response.ok) {
+      if (response.status === 400 || response.status === 404) {
+        throw new Error(
+          `Could not find weather for "${locationQuery}". Please check your spelling or try another location.`
+        );
+      }
+      throw new Error(`Weather API error (status ${response.status})`);
+    }
+
+    return await response.json();
   }
 }
