@@ -1,6 +1,18 @@
+import EventBus from "../utilities/EventBus";
+
 export default class LocationService {
   #locationPromise = null;
   #defaultLocation = "London, United Kingdom";
+
+  constructor() {
+    this.registerEvents();
+  }
+
+  registerEvents() {
+    EventBus.on("locationSubmitted", (location) => {
+      this.setLocation(location);
+    });
+  }
 
   async getUserLocationData() {
     try {
@@ -35,8 +47,24 @@ export default class LocationService {
     return this.#locationPromise;
   }
 
-  setLocation(newLocation) {
-    this.#locationPromise = Promise.resolve(newLocation);
+  async setLocation(location) {
+    EventBus.emit("locationLoading", { location });
+
+    try {
+      const resolvedLocation = await this.resolveName(location);
+
+      if (!resolvedLocation) {
+        throw new Error("Location not found");
+      }
+
+      this.#locationPromise = Promise.resolve(resolvedLocation);
+      EventBus.emit("locationUpdated", resolvedLocation);
+    } catch (error) {
+      console.error("Location update failed:", error);
+      EventBus.emit("locationError", { message: error.message, error });
+    } finally {
+      EventBus.emit("locationLoaded");
+    }
   }
 
   async resolveName(location) {
@@ -49,21 +77,18 @@ export default class LocationService {
       } else if (location.latitude && location.longitude) {
         url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&lat=${location.latitude}&lon=${location.longitude}`;
       } else {
-        throw new Error("Invalid location parameters");
+        return this.#defaultLocation;
       }
 
       const data = await this.#fetchJson(url);
       const result = Array.isArray(data) ? data[0] : data;
 
-      if (!result) {
-        throw new Error(
-          `No matching location found for "${typeof location === "string" ? location : "coordinates"}"`,
-        );
-      }
+      if (!result) return null;
 
       return this.#extractCityCountry(result);
     } catch (error) {
-      throw new Error(error.message || "Failed to resolve location");
+      console.warn("Failed to resolve location:", error);
+      return this.#defaultLocation;
     }
   }
 

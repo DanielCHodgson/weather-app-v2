@@ -8,6 +8,7 @@ export default class WeatherDataService {
   #lastFetchedTime = 0;
   #memoryCacheDuration = 2 * 60 * 1000;
   #isCelsius;
+  #lastError = null;
 
   constructor(weatherAPI, locationService) {
     this.#weatherAPI = weatherAPI;
@@ -28,6 +29,20 @@ export default class WeatherDataService {
         this.refreshData();
       }
     });
+
+    EventBus.on("locationUpdated", () => {
+      this.#clearErrorState();
+    });
+  }
+
+  #clearErrorState() {
+    this.#lastError = null;
+  }
+
+  #invalidateCache() {
+    this.#lastFetchedData = null;
+    this.#lastFetchedLocation = null;
+    this.#lastFetchedTime = 0;
   }
 
   async #getOrFetchData() {
@@ -37,43 +52,86 @@ export default class WeatherDataService {
     if (
       this.#lastFetchedData &&
       JSON.stringify(location) === JSON.stringify(this.#lastFetchedLocation) &&
-      now - this.#lastFetchedTime < this.#memoryCacheDuration
+      now - this.#lastFetchedTime < this.#memoryCacheDuration &&
+      !this.#lastError
     ) {
       return this.#lastFetchedData;
     }
 
-    const data = await this.#weatherAPI.getData(location, this.#isCelsius);
+    try {
+      const data = await this.#weatherAPI.getData(location, this.#isCelsius);
 
-    this.#lastFetchedData = data;
-    this.#lastFetchedLocation = location;
-    this.#lastFetchedTime = now;
+      this.#lastFetchedData = data;
+      this.#lastFetchedLocation = location;
+      this.#lastFetchedTime = now;
+      this.#clearErrorState();
 
-    return data;
+      return data;
+    } catch (error) {
+      this.#lastError = error;
+      this.#invalidateCache();
+      throw error;
+    }
   }
 
   async getAllData() {
-    return await this.#getOrFetchData();
+    try {
+      return await this.#getOrFetchData();
+    } catch (error) {
+      console.error("Failed to get all data:", error);
+      throw error;
+    }
   }
 
   async getFortnightData() {
-    const data = await this.#getOrFetchData();
-    return data.days;
+    try {
+      const data = await this.#getOrFetchData();
+      return data.days;
+    } catch (error) {
+      console.error("Failed to get fortnight data:", error);
+      throw error;
+    }
   }
 
   async getCurrentForecast() {
-    const data = await this.#getOrFetchData();
-    const locationName = await this.#locationService.getName();
-    data.currentConditions.location = locationName;
-    return data.currentConditions;
+    try {
+      const data = await this.#getOrFetchData();
+      const locationName = await this.#locationService.getName();
+      data.currentConditions.location = locationName;
+      return data.currentConditions;
+    } catch (error) {
+      console.error("Failed to get current forecast:", error);
+      throw error;
+    }
+  }
+
+  extractConditionsData(data) {
+    return {
+      wind: { speed: data.windspeed, direction: data.winddir },
+      uv: { index: data.uvindex },
+      humidity: { humidity: data.humidity },
+      pressure: { pressure: data.pressure },
+      suntimes: { sunrise: data.sunrise, sunset: data.sunset },
+    };
   }
 
   async refreshData() {
-    const location = await this.#locationService.getLocation();
-    const data = await this.#weatherAPI.getData(location, this.#isCelsius);
-    this.#lastFetchedData = data;
-    this.#lastFetchedLocation = location;
-    this.#lastFetchedTime = Date.now();
-    return data;
+    try {
+      const location = await this.#locationService.getLocation();
+      const data = await this.#weatherAPI.getData(location, this.#isCelsius);
+
+      this.#lastFetchedData = data;
+      this.#lastFetchedLocation = location;
+      this.#lastFetchedTime = Date.now();
+      this.#clearErrorState();
+
+      return data;
+    } catch (error) {
+      this.#lastError = error;
+      this.#invalidateCache();
+      console.error("Failed to refresh data:", error);
+      throw error;
+    }
   }
 
   getLocationService() {
@@ -82,5 +140,13 @@ export default class WeatherDataService {
 
   getCurrentLocation() {
     return this.#locationService.getLocation();
+  }
+
+  hasError() {
+    return this.#lastError !== null;
+  }
+
+  getLastError() {
+    return this.#lastError;
   }
 }

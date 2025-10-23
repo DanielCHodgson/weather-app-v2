@@ -44,6 +44,10 @@ export default class Search {
       this.showMessage(error.message, "error");
     });
 
+    EventBus.on("locationError", (error) => {
+      this.showMessage(error.message, "error");
+    });
+
     EventBus.on("weatherUpdated", () => {
       this.clearMessage();
     });

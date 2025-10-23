@@ -29,6 +29,10 @@ export default class DailyForecastTile {
     EventBus.on("weatherLoaded", () =>
       DomUtility.removeSkeletons(this.#fields),
     );
+
+    EventBus.on("locationError", () =>
+      DomUtility.removeSkeletons(this.#fields),
+    );
   }
 
   select() {

@@ -9,32 +9,13 @@ export default class WeatherController {
   }
 
   registerEvents() {
-    EventBus.on("locationSubmitted", (location) => {
-      this.updateLocation(location);
-    });
     EventBus.on("daySubmitted", (day) =>
       this.updateWeather(this.#weatherDataService.getCurrentLocation(), day),
     );
+
+    EventBus.on("locationUpdated", (location) => this.updateWeather(location));
   }
 
-  async updateLocation(location) {
-    if (!location) {
-      EventBus.emit("locationError", { message: "Invalid location." });
-      return;
-    }
-
-    try {
-      EventBus.emit("locationLoading", { location });
-      this.#weatherDataService.getLocationService().setLocation(location);
-      EventBus.emit("locationUpdated", location);
-      await this.updateWeather(location, 0);
-    } catch (error) {
-      console.error("Location update failed:", error);
-      EventBus.emit("locationError", { message: error.message, error });
-    } finally {
-      EventBus.emit("locationLoaded");
-    }
-  }
   async updateWeather(location, dayIndex = 0) {
     if (!location) {
       EventBus.emit("weatherError", { message: "Location not provided." });
@@ -56,7 +37,7 @@ export default class WeatherController {
         .getName(location);
 
       const { wind, uv, humidity, pressure, suntimes } =
-        this.#extractConditionsData(dayForecast);
+        this.#weatherDataService.extractConditionsData(dayForecast);
 
       EventBus.emit("weatherUpdated", {
         location: locationName,
@@ -84,15 +65,5 @@ export default class WeatherController {
       this.#weatherDataService.getFortnightData(),
     ]);
     return { currentForecast, fortnightForecast };
-  }
-
-  #extractConditionsData(forecast) {
-    return {
-      wind: { speed: forecast.windspeed, direction: forecast.winddir },
-      uv: { index: forecast.uvindex },
-      humidity: { humidity: forecast.humidity },
-      pressure: { pressure: forecast.pressure },
-      suntimes: { sunrise: forecast.sunrise, sunset: forecast.sunset },
-    };
   }
 }
