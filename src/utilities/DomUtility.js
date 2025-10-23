@@ -66,11 +66,8 @@ export default class DomUtility {
   }
 
   static addSkeleton(element) {
-    element.classList.add("skeleton");
-    if (element.tagName === "IMG") {
-      element.src = blankIcon;
-    } else {
-      element.textContent = "";
+    if (element.tagName !== "IMG") {
+      element.classList.add("skeleton");
     }
   }
 

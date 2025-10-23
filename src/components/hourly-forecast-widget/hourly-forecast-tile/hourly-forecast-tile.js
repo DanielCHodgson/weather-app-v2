@@ -3,7 +3,7 @@ import "./hourly-forecast-tile.css";
 import DomUtility from "../../../utilities/DomUtility";
 import EventBus from "../../../utilities/EventBus";
 
-export default class ForecastTile {
+export default class HourlyForecastTile {
   #container;
   #element;
   #fields = {};
@@ -29,8 +29,9 @@ export default class ForecastTile {
   cacheFields() {
     return {
       temp: this.#element.querySelector(".temp"),
-      icon: this.#element.querySelector(".icon"),
       time: this.#element.querySelector(".time"),
+      iconWrapper: this.#element.querySelector(".icon-wrapper"),
+      icon: this.#element.querySelector(".icon"),
     };
   }
 
@@ -44,8 +45,6 @@ export default class ForecastTile {
       this.#fields.forEach((element) => {
         DomUtility.showFallbackText(element);
       });
-    } finally {
-      DomUtility.removeSkeleton(this.#element);
     }
   }
 

@@ -44,6 +44,7 @@ export default class DailyForecastTile {
       date: this.#element.querySelector(".date"),
       actual: this.#element.querySelector(".actual"),
       feelsLike: this.#element.querySelector(".feels-like"),
+      iconWrapper: this.#element.querySelector(".icon-wrapper"),
       icon: this.#element.querySelector(".icon"),
       conditions: this.#element.querySelector(".conditions"),
     };

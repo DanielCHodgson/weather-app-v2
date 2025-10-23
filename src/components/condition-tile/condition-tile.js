@@ -1,4 +1,4 @@
-import htmlString from "./Condition-tile.html";
+import htmlString from "./condition-tile.html";
 import "./condition-tile.css";
 import DomUtility from "../../utilities/DomUtility";
 import EventBus from "../../utilities/EventBus";
@@ -25,6 +25,7 @@ export default class ConditionTile {
       title: this.#element.querySelector(".title"),
       value: this.#element.querySelector(".value"),
       description: this.#element.querySelector(".description"),
+      iconWrapper: this.#element.querySelector(".icon-wrapper"),
       icon: this.#element.querySelector(".icon"),
     };
   }

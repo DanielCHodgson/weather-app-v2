@@ -24,15 +24,20 @@
 .hourly-forecast-tile .temp.skeleton {
   width: 1.5rem;
   height: 1.5rem;
+  color: transparent;
 }
 
 .hourly-forecast-tile .time.skeleton {
-  color: #555;
   width: 5rem;
   height: 1rem;
+  color: transparent;
 }
 
-.hourly-forecast-tile .icon.skeleton {
+.hourly-forecast-tile .description.skeleton {
+    color: transparent;
+}
+
+.hourly-forecast-tile .icon-wrapper.skeleton {
   width: 3rem;
   height: 3rem;
 }

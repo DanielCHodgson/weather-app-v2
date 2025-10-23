@@ -34,6 +34,7 @@ export default class CurrentForecastWidget {
     return {
       locationPrimary: this.#element.querySelector(".location .primary"),
       locationSecondary: this.#element.querySelector(".location .secondary"),
+      iconWrapper: this.#element.querySelector(".icon-wrapper"),
       icon: this.#element.querySelector(".icon"),
       temp: this.#element.querySelector(".temp"),
       description: this.#element.querySelector(".description"),

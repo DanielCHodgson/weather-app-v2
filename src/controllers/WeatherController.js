@@ -27,15 +27,14 @@ export default class WeatherController {
       EventBus.emit("locationLoading", { location });
       this.#weatherDataService.getLocationService().setLocation(location);
       EventBus.emit("locationUpdated", location);
+      await this.updateWeather(location, 0);
     } catch (error) {
       console.error("Location update failed:", error);
       EventBus.emit("locationError", { message: error.message, error });
     } finally {
       EventBus.emit("locationLoaded");
-      this.updateWeather(location, 0);
     }
   }
-
   async updateWeather(location, dayIndex = 0) {
     if (!location) {
       EventBus.emit("weatherError", { message: "Location not provided." });

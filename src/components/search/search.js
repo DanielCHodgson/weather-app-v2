@@ -27,6 +27,7 @@ export default class Search {
     this.#input.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
+        this.clearMessage();
         this.#handleSubmit(event);
       }
     });

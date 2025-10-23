@@ -49,16 +49,16 @@
 .forecast-tile .feels-like.skeleton {
   width: 1.5rem;
   height: 1.5rem;
-  background-color: rgba(200, 200, 200, 0.3);
   border-radius: 4px;
   margin: 0.25rem;
+  color: transparent;
 }
 
 .forecast-tile .date.skeleton,
 .forecast-tile .conditions.skeleton {
   width: 10rem;
   height: 1.5rem;
-  background-color: rgba(200, 200, 200, 0.3);
   border-radius: 4px;
   margin: 0.5rem;
+  color: transparent;
 }
