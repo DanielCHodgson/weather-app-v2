@@ -43,3 +43,26 @@
   place-self: center;
   width: 50%;
 }
+
+.condition-tile .icon.skeleton {
+  width: 40%;
+  height: 50%;
+}
+
+.condition-tile .title.skeleton {
+  display: inline-block;
+  width: 10rem;
+  height: 1.5rem;
+  margin: 0.25rem;
+}
+.condition-tile .value.skeleton {
+  display: inline-block;
+  width: 7rem;
+  height: 1.2rem;
+  margin: 0.25rem;
+}
+.condition-tile .description.skeleton {
+  display: inline-block; 
+  width: 5rem;
+  height: 1.2rem;
+}

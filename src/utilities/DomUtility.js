@@ -1,3 +1,5 @@
+import blankIcon from "../res/icons/blank.svg";
+
 export default class DomUtility {
   static stringToHTML(string) {
     if (typeof string !== "string" || string.trim() === "") {
@@ -41,9 +43,7 @@ export default class DomUtility {
       return module.default;
     } catch (err) {
       console.warn(`Icon "${name}" not found, using default.`);
-      const defaultModule = await import(
-        `../res/icons/blank.svg`
-      );
+      const defaultModule = await import(`../res/icons/blank.svg`);
       return defaultModule.default;
     }
   }
@@ -61,17 +61,28 @@ export default class DomUtility {
     }
   }
 
-
   static showFallbackText(field) {
     field.textContent = "No data";
   }
 
-  static removeSkeletons(elements) {
-    Object.values(elements).forEach((element) =>
-      element.classList.remove("skeleton"),
-    );
+  static addSkeleton(element) {
+    element.classList.add("skeleton");
+    if (element.tagName === "IMG") {
+      element.src = blankIcon;
+    } else {
+      element.textContent = "";
+    }
   }
+
   static removeSkeleton(element) {
     element.classList.remove("skeleton");
+  }
+
+  static addSkeletons(elements) {
+    Object.values(elements).forEach((element) => this.addSkeleton(element));
+  }
+
+  static removeSkeletons(elements) {
+    Object.values(elements).forEach((element) => this.removeSkeleton(element));
   }
 }

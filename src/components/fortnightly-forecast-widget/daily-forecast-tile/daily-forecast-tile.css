@@ -31,16 +31,34 @@
   color: #fff;
 }
 
-.date,
-.actual {
+.forecast-tile .date,
+.forecast-tile .actual {
   font-weight: bold;
 }
-.day {
+.forecast-tile .day {
   align-self: center;
   justify-items: start;
 }
 
-.feels-like,
-.conditions {
+.forecast-tile .feels-like,
+.forecast-tile .conditions {
   color: #6c6c6c;
+}
+
+.forecast-tile .actual.skeleton,
+.forecast-tile .feels-like.skeleton {
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: rgba(200, 200, 200, 0.3);
+  border-radius: 4px;
+  margin: 0.25rem;
+}
+
+.forecast-tile .date.skeleton,
+.forecast-tile .conditions.skeleton {
+  width: 10rem;
+  height: 1.5rem;
+  background-color: rgba(200, 200, 200, 0.3);
+  border-radius: 4px;
+  margin: 0.5rem;
 }

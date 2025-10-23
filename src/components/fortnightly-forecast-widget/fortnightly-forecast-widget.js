@@ -1,6 +1,6 @@
 import htmlString from "./fortnightly-forecast-widget.html";
 import "./fortnightly-forecast-widget.css";
-import ForecastTile from "./forecast-tile/forecast-tile";
+import DailyForecastTile from "./daily-forecast-tile/daily-forecast-tile";
 import DomUtility from "../../utilities/DomUtility";
 import EventBus from "../../utilities/EventBus";
 
@@ -12,33 +12,36 @@ export default class FortnightlyForecastWidget {
   constructor(container) {
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
+
     this.addTiles();
     this.registerEvents();
     this.render();
   }
 
+  addTiles() {
+    for (let i = 0; i < 14; i++) {
+      this.#tiles.push(new DailyForecastTile(this.#element, i));
+    }
+  }
+
   registerEvents() {
-    EventBus.on("locationUpdated", (data) => {
-      this.#tiles.forEach(tile => tile.toggleSelected());
+    EventBus.on("locationUpdated", () => {
+      this.#tiles.forEach((tile) => tile.deselect());
     });
 
     EventBus.on("weatherUpdated", (data) => {
       this.setData(data.fortnight);
     });
-  }
 
-  cacheFields() {
-    return {};
-  }
-
-  addTiles() {
-    for (let i = 0; i < 14; i++) {
-      this.#tiles.push(new ForecastTile(this.#element, i));
-    }
+    EventBus.on("daySubmitted", (dayIndex) => {
+      this.#tiles.forEach((tile, idx) => {
+        idx === dayIndex ? tile.select() : tile.deselect();
+      });
+    });
   }
 
   async setData(data) {
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < this.#tiles.length; i++) {
       this.#tiles[i].setData(data[i]);
     }
   }

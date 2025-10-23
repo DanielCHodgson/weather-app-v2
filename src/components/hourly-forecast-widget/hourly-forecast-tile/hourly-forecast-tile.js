@@ -1,6 +1,7 @@
 import htmlString from "./hourly-forecast-tile.html";
 import "./hourly-forecast-tile.css";
 import DomUtility from "../../../utilities/DomUtility";
+import EventBus from "../../../utilities/EventBus";
 
 export default class ForecastTile {
   #container;
@@ -11,7 +12,18 @@ export default class ForecastTile {
     this.#container = container;
     this.#element = DomUtility.stringToHTML(htmlString);
     this.#fields = this.cacheFields();
+    this.registerEvents();
     this.render();
+  }
+
+  registerEvents() {
+    EventBus.on("weatherLoading", () => {
+      DomUtility.addSkeletons(this.#fields);
+    });
+
+    EventBus.on("weatherLoaded", () => {
+      DomUtility.removeSkeletons(this.#fields);
+    });
   }
 
   cacheFields() {

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 
 .app {
   max-width: 100%;
@@ -24,6 +24,14 @@
   animation: skeleton-loading 1.2s ease-in-out infinite;
   color: transparent;
   border-radius: 4px;
+}
+
+.skeleton.icon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0.2rem;
+  border-radius: 50%;
+  justify-self: center;
 }
 
 @keyframes skeleton-loading {

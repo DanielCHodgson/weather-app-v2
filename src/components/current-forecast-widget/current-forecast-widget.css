@@ -4,7 +4,7 @@
   padding: 0.25em 0.5em;
   border-radius: 4px;
   background-color: rgb(190, 116, 116);
-  
+
   display: grid;
   grid-template-columns: 2fr 200px 2fr;
   justify-items: center;
@@ -67,32 +67,45 @@
   font-size: 2rem;
 }
 
-.skeleton.location.primary,
-.skeleton.location.secondary {
-  width: 120px;
-  height: 18px;
+.daily-forecast .primary.skeleton,
+.daily-forecast .secondary.skeleton {
   padding: 1rem;
+  margin: 0.5rem;
+  justify-self: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.daily-forecast .primary.skeleton {
+  width: 250px;
+  height: 3rem;
+}
+.daily-forecast .secondary.skeleton {
+  width: 150px;
+  height: 2.25rem;
+  padding: 1rem;
+  margin: 0.5rem;
+  justify-self: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.daily-forecast .icon.skeleton {
+  width: 8rem;
+  height: 8rem;
   justify-self: center;
 }
 
-.skeleton.icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  justify-self: center;
-}
-
-.skeleton.temp {
-  width: 60px;
-  height: 24px;
+.daily-forecast .temp.skeleton {
+  width: 3rem;
+  height: 3rem;
   justify-self: center;
   padding: 0.5rem;
   margin: 0.5rem;
 }
 
-.skeleton.description {
-  width: 100px;
-  height: 16px;
+.daily-forecast .description.skeleton {
+  width: 15rem;
+  height: 2.5rem;
   justify-self: center;
   padding: 0.5rem;
 }

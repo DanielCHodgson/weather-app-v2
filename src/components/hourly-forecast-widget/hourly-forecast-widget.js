@@ -18,11 +18,8 @@ export default class HourlyForecastWidget {
   }
 
   registerEvents() {
-    //EventBus.on("locationUpdated", (data) => {
-     // this.setData(data.day);
-   // });
     EventBus.on("weatherUpdated", (data) => {
-      this.setData(data.day);
+      this.setAllTileData(data.day);
     });
   }
 
@@ -36,7 +33,7 @@ export default class HourlyForecastWidget {
     }
   }
 
-  async setData(data) {
+  async setAllTileData(data) {
     for (let i = 0; i < 24; i++) {
       this.#tiles[i].setData(data.hours[i]);
     }

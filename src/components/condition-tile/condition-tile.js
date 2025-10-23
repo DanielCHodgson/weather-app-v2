@@ -30,7 +30,14 @@ export default class ConditionTile {
   }
 
   registerEvents() {
+    EventBus.on("weatherLoading", () => {
+      DomUtility.addSkeletons(this.#fields);
+    });
     EventBus.on("weatherUpdated", (data) => this.handleUpdate(data));
+
+    EventBus.on("weatherLoaded", () => {
+      DomUtility.removeSkeletons(this.#fields);
+    });
   }
 
   handleUpdate(data) {

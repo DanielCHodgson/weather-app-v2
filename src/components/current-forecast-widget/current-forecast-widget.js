@@ -17,8 +17,16 @@ export default class CurrentForecastWidget {
   }
 
   registerEvents() {
+    EventBus.on("weatherLoading", () => {
+      DomUtility.addSkeletons(this.#fields);
+    });
+
     EventBus.on("weatherUpdated", (data) => {
       this.setData(data);
+    });
+
+    EventBus.on("weatherLoaded", () => {
+      DomUtility.removeSkeletons(this.#fields);
     });
   }
 
@@ -34,17 +42,16 @@ export default class CurrentForecastWidget {
 
   async setData(data) {
     try {
-      if(data.dayIndex === 0) {
+      if (data.dayIndex === 0) {
         this.#updateLocation(data.location);
         this.#updateForecast(data.current);
         await this.#updateIcon(data.current.icon);
         await this.#updateBanner(data.current.icon);
-      }
-      else {
-      this.#updateLocation(data.location);
-      this.#updateForecast(data.day);
-      await this.#updateIcon(data.day.icon);
-      await this.#updateBanner(data.day.icon);
+      } else {
+        this.#updateLocation(data.location);
+        this.#updateForecast(data.day);
+        await this.#updateIcon(data.day.icon);
+        await this.#updateBanner(data.day.icon);
       }
     } catch (error) {
       console.error("Failed to load data:", error);
@@ -53,20 +60,27 @@ export default class CurrentForecastWidget {
         this.#fields.locationSecondary,
         this.#fields.description,
       ]);
-    } finally {
-      DomUtility.removeSkeletons(this.#fields);
     }
   }
 
   #updateLocation(location) {
+    let city = "";
+    let country = "";
+
     if (typeof location === "string") {
-      const [city, country] = location.split(",").map((s) => s.trim());
-      this.#fields.locationPrimary.textContent = city || "";
-      this.#fields.locationSecondary.textContent = country || "";
+      [city, country] = location.split(",").map((s) => s.trim());
     } else if (typeof location === "object" && location !== null) {
-      this.#fields.locationPrimary.textContent = location.city || "";
-      this.#fields.locationSecondary.textContent = location.country || "";
+      city = location.city;
+      country = location.country;
     }
+
+    this.#fields.locationPrimary.textContent = city || "—";
+    this.#fields.locationSecondary.textContent = country || "—";
+  }
+
+  setWeatherIcon(iconToUse) {
+    const src = DomUtility.getAnimatedWeatherIcon(iconToUse);
+    this.#fields.icon.src = src;
   }
 
   #updateForecast(data) {
@@ -75,7 +89,12 @@ export default class CurrentForecastWidget {
   }
 
   async #updateIcon(iconName) {
-    this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(iconName);
+    try {
+      this.#fields.icon.src = await DomUtility.getAnimatedWeatherIcon(iconName);
+    } catch (err) {
+      console.error("Failed to load icon:", err);
+      this.#fields.icon.src = "../../res/icons/blank.svg";
+    }
   }
 
   async #updateBanner(iconName) {
@@ -88,11 +107,6 @@ export default class CurrentForecastWidget {
     } catch (err) {
       console.error("Failed to update banner:", err);
     }
-  }
-
-  setWeatherIcon(iconToUse) {
-    const src = DomUtility.getAnimatedWeatherIcon(iconToUse);
-    this.#fields.icon.src = src;
   }
 
   render() {

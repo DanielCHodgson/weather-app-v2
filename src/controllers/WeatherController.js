@@ -11,8 +11,7 @@ export default class WeatherController {
   registerEvents() {
     EventBus.on("locationSubmitted", (location) => {
       this.updateLocation(location);
-    }
-    );
+    });
     EventBus.on("daySubmitted", (day) =>
       this.updateWeather(this.#weatherDataService.getCurrentLocation(), day),
     );
@@ -26,16 +25,14 @@ export default class WeatherController {
 
     try {
       EventBus.emit("locationLoading", { location });
-
       this.#weatherDataService.getLocationService().setLocation(location);
-      this.updateWeather(location, 0);
-
       EventBus.emit("locationUpdated", location);
     } catch (error) {
       console.error("Location update failed:", error);
       EventBus.emit("locationError", { message: error.message, error });
     } finally {
       EventBus.emit("locationLoaded");
+      this.updateWeather(location, 0);
     }
   }
 
@@ -45,6 +42,7 @@ export default class WeatherController {
       return;
     }
     try {
+      EventBus.emit("weatherLoading", { location });
       const { currentForecast, fortnightForecast } =
         await this.#getForecastData();
 

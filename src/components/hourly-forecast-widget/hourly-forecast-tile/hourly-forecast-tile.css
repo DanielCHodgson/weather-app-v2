@@ -8,15 +8,31 @@
   justify-content: space-between;
 
   scroll-snap-align: start;
-  background-color: #FFF;
+  background-color: #fff;
   border-radius: 8px;
   text-align: center;
 }
 
 .hourly-forecast-tile .temp {
- font-weight: bold;
+  font-weight: bold;
 }
 
 .hourly-forecast-tile .time {
   color: #555;
+}
+
+.hourly-forecast-tile .temp.skeleton {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.hourly-forecast-tile .time.skeleton {
+  color: #555;
+  width: 5rem;
+  height: 1rem;
+}
+
+.hourly-forecast-tile .icon.skeleton {
+  width: 3rem;
+  height: 3rem;
 }
