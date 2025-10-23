@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunknode_js_template=self.webpackChunknode_js_template||[]).push([[212],{2212:(e,p,s)=>{e.exports=s.p+"d9f244a52734858538aa.jpg"}}]);
