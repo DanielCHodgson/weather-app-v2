@@ -89,7 +89,7 @@
   border-radius: 4px;
 }
 
-.daily-forecast .icon.skeleton {
+.daily-forecast .icon-wrapper.skeleton {
   width: 8rem;
   height: 8rem;
   justify-self: center;
