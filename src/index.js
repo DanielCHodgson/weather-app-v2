@@ -24,10 +24,3 @@ const dashboard = new Dashboard(document.querySelector(".app"));
 const weatherController = new WeatherController(weatherDataService);
 
 weatherController.updateWeather(await locationService.getLocation());
-
-async function printAllWeatherData() {
-  const data = await weatherDataService.getAllData();
-  console.log(data);
-}
-
-printAllWeatherData();
